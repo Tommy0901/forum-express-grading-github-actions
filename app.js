@@ -9,6 +9,7 @@ app.engine('.hbs', handlebars({ extname: '.hbs' })) // 註冊 Handlebars 樣板�
 app.set('view engine', '.hbs') // 設定使用 Handlebars 做為樣板引擎
 app.set('views', './views') // 參考之前作法加入此行程式碼
 
+app.use(express.urlencoded({ extended: true }))
 app.use(routes)
 
 app.listen(port, () => {
