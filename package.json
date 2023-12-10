@@ -15,8 +15,10 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "connect-flash": "^0.1.1",
     "express": "^4.17.1",
     "express-handlebars": "^7.1.2",
+    "express-session": "^1.17.3",
     "mysql2": "^2.3.3",
     "sequelize": "^6.35.1",
     "sequelize-cli": "^6.6.2"
