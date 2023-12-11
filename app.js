@@ -2,6 +2,7 @@ const express = require('express')
 const session = require('express-session')
 const { engine: handlebars } = require('express-handlebars')
 const flash = require('connect-flash')
+const passport = require('./config/passport')
 const routes = require('./routes')
 
 const app = express()
@@ -14,6 +15,8 @@ app.set('views', './views') // 參考之前作法加入此行程式碼
 
 app.use(express.urlencoded({ extended: true }))
 app.use(session({ secret: SESSION_SECRET, resave: 'false', saveUninitialized: false }))
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(flash())
 app.use((req, res, next) => {
   res.locals.success_msg = req.flash('success')
