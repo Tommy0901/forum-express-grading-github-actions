@@ -30,10 +30,12 @@ const userController = {
     req.flash('success', '登入成功!')
     return res.redirect('/restaurants')
   },
-  logout: (req, res) => {
-    req.flash('success', '登出成功!')
-    req.logout()
-    return res.redirect('/signin')
+  logout: (req, res, next) => {
+    req.logout(error => {
+      if (error) throw new Error('Logout failed. Please try again!')
+      else req.flash('success', '登出成功!')
+      return res.redirect('/signin')
+    })
   }
 }
 module.exports = userController
