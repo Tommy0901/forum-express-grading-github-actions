@@ -38,6 +38,34 @@ const adminController = {
         next(error)
       }
     })()
+  },
+  editRestaurant: (req, res, next) => {
+    const { id } = req.params;
+    (async () => {
+      try {
+        const restaurant = await Restaurant.findByPk(id, { raw: true })
+        if (!restaurant) throw new Error("Restaurant didn't exist!")
+        res.render('admin/edit-restaurant', { restaurant })
+      } catch (error) {
+        next(error)
+      }
+    })()
+  },
+  putRestaurant: (req, res, next) => {
+    const { id } = req.params
+    const { name, tel, address, openingHours, description } = req.body
+    if (!name || !tel || !address) throw new Error('Restaurant needs name, tel and address.');
+    (async () => {
+      try {
+        const restaurant = await Restaurant.findByPk(id) // 接著操作 Sequelize 語法，不加 { raw: true }
+        if (!restaurant) throw new Error("Restaurant didn't exist!")
+        await restaurant.update({ name, tel, address, openingHours, description })
+        req.flash('success', 'restaurant was successfully to update!')
+        res.redirect('/admin/restaurants')
+      } catch (error) {
+        next(error)
+      }
+    })()
   }
 }
 module.exports = adminController

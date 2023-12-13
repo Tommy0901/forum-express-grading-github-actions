@@ -9,6 +9,7 @@ const { sessionHandler } = require('./middlewares/session-handler')
 const { messageHandler } = require('./middlewares/message-handler')
 const { urlencodedHandler } = require('./middlewares/express-handler')
 const { generalErrorHandler } = require('./middlewares/error-handler')
+const { methodOverrideHandler } = require('./middlewares/methodOverride-handler')
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -19,6 +20,7 @@ app.set('views', './views') // 參考之前作法加入此行程式碼
 
 app.use(
   urlencodedHandler,
+  methodOverrideHandler,
   sessionHandler,
   passport.initialize(),
   passport.session(),
