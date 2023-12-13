@@ -15,7 +15,7 @@ passport.use(
             where: { email },
             raw: true
           })
-          return user
+          user
             ? (await bcrypt.compare(password, user.password))
                 ? done(null, user)
                 : done(null, false, {
@@ -33,14 +33,14 @@ passport.use(
 
 passport.serializeUser((user, done) => {
   const { id } = user
-  return done(null, id)
+  done(null, id)
 })
 
 passport.deserializeUser((id, done) => {
   (async () => {
     try {
       const user = await User.findByPk(id, { raw: true })
-      return done(null, user)
+      done(null, user)
     } catch (error) {
       done(error)
     }
