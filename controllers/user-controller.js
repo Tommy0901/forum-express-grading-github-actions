@@ -26,9 +26,17 @@ const userController = {
   signInPage: (req, res) => {
     res.render('signin')
   },
-  signIn: (req, res) => {
-    req.flash('success', '登入成功!')
-    res.redirect('/restaurants')
+  signIn: (req, res, next) => {
+    const { id } = req.user;
+    (async () => {
+      try {
+        const user = await User.findByPk(id, { raw: true })
+        req.flash('success', '登入成功!')
+        res.redirect(user.isAdmin ? '/admin/restaurants' : '/restaurants')
+      } catch (error) {
+        next(error)
+      }
+    })()
   },
   logout: (req, res, next) => {
     req.logout(error => {
