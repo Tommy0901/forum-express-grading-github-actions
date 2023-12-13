@@ -1,6 +1,22 @@
 const { Restaurant } = require('../models')
 
 const adminController = {
+  createRestaurant: (req, res) => {
+    res.render('admin/create-restaurant')
+  },
+  postRestaurant: (req, res, next) => {
+    const { name, tel, address, openingHours, description } = req.body
+    if (!name || !tel || !address) throw new Error('Restaurant needs name, tel and address.');
+    (async () => {
+      try {
+        await Restaurant.create({ name, tel, address, openingHours, description })
+        req.flash('success', 'restaurant was successfully created!')
+        res.redirect('/admin/restaurants')
+      } catch (error) {
+        next(error)
+      }
+    })()
+  },
   getRestaurants: (req, res, next) => {
     (async () => {
       try {
