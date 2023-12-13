@@ -1,4 +1,6 @@
 const { ensureAuthenticated, getUser } = require('../helpers/auth-helpers')
+const passport = require('../config/passport')
+const passportAuthLocal = passport.authenticate('local', { failureRedirect: '/signin', failureFlash: true })
 
 module.exports = {
   authenticated (req, res, next) {
@@ -12,5 +14,6 @@ module.exports = {
         ? next()
         : res.redirect('back')
       : res.redirect('/')
-  }
+  },
+  passportAuthLocal
 }

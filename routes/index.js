@@ -1,27 +1,20 @@
 const express = require('express')
 const router = express.Router()
 
-const passport = require('../config/passport')
+const { authenticated, authenticatedAdmin } = require('../middlewares/auth-handler')
+
+const root = require('./root')
 const admin = require('./modules/admin')
+const signUp = require('./signup')
+const signIn = require('./signin')
+const logOut = require('./logout')
+const restaurants = require('./restaurants')
 
-const restController = require('../controllers/restaurant-controller') // 新增，載入 controller
-const userController = require('../controllers/user-controller') // 新增，載入 controller
-const { authenticated } = require('../middlewares/auth-handler')
-const { generalErrorHandler } = require('../middlewares/error-handler')
-
-router.use('/admin', admin)
-
-router.get('/signup', userController.signUpPage)
-router.post('/signup', userController.signUp)
-
-router.get('/signin', userController.signInPage)
-router.post('/signin', passport.authenticate('local', { failureRedirect: '/signin', failureFlash: true }), userController.signIn)
-
-router.get('/logout', userController.logout)
-
-router.get('/restaurants', authenticated, restController.getRestaurants)
-router.get('/', (req, res) => res.redirect('/restaurants'))
-
-router.use('/', generalErrorHandler)
+router.use('/', root)
+router.use('/admin', authenticatedAdmin, admin)
+router.use('/signup', signUp)
+router.use('/signin', signIn)
+router.use('/logout', logOut)
+router.use('/restaurants', authenticated, restaurants)
 
 module.exports = router
