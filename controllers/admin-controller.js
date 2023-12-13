@@ -60,7 +60,21 @@ const adminController = {
         const restaurant = await Restaurant.findByPk(id) // 接著操作 Sequelize 語法，不加 { raw: true }
         if (!restaurant) throw new Error("Restaurant didn't exist!")
         await restaurant.update({ name, tel, address, openingHours, description })
-        req.flash('success', 'restaurant was successfully to update!')
+        req.flash('success', 'restaurant was successfully updated!')
+        res.redirect('/admin/restaurants')
+      } catch (error) {
+        next(error)
+      }
+    })()
+  },
+  deleteRestaurant: (req, res, next) => {
+    const { id } = req.params;
+    (async () => {
+      try {
+        const restaurant = await Restaurant.findByPk(id) // 接著操作 Sequelize 語法，不加 { raw: true }
+        if (!restaurant) throw new Error("Restaurant didn't exist!")
+        await restaurant.destroy()
+        req.flash('success', 'restaurant was successfully deleted!')
         res.redirect('/admin/restaurants')
       } catch (error) {
         next(error)
