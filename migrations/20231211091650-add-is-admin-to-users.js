@@ -12,6 +12,7 @@ module.exports = {
         allowNull: false
       } // type
     )
+    await queryInterface.sequelize.query('ALTER TABLE users MODIFY COLUMN is_admin TINYINT(1) AFTER password;')
   },
 
   async down (queryInterface, Sequelize) {

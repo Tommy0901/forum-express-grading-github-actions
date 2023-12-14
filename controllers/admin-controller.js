@@ -1,15 +1,17 @@
 const { Restaurant } = require('../models')
+const { localFileHandler } = require('../helpers/file-helpers')
 
 const adminController = {
   createRestaurant: (req, res) => {
     res.render('admin/create-restaurant')
   },
   postRestaurant: (req, res, next) => {
+    const { file } = req
     const { name, tel, address, openingHours, description } = req.body
     if (!name || !tel || !address) throw new Error('Restaurant needs name, tel and address.');
     (async () => {
       try {
-        await Restaurant.create({ name, tel, address, openingHours, description })
+        await Restaurant.create({ name, tel, address, openingHours, description, image: await localFileHandler(file) })
         req.flash('success', 'restaurant was successfully created!')
         res.redirect('/admin/restaurants')
       } catch (error) {
@@ -52,14 +54,15 @@ const adminController = {
     })()
   },
   putRestaurant: (req, res, next) => {
+    const { file } = req
     const { id } = req.params
     const { name, tel, address, openingHours, description } = req.body
     if (!name || !tel || !address) throw new Error('Restaurant needs name, tel and address.');
     (async () => {
       try {
-        const restaurant = await Restaurant.findByPk(id) // 接著操作 Sequelize 語法，不加 { raw: true }
+        const [filePath, restaurant] = await Promise.all([localFileHandler(file), Restaurant.findByPk(id)])
         if (!restaurant) throw new Error("Restaurant didn't exist!")
-        await restaurant.update({ name, tel, address, openingHours, description })
+        await restaurant.update({ name, tel, address, openingHours, description, image: filePath || restaurant.image })
         req.flash('success', 'restaurant was successfully updated!')
         res.redirect('/admin/restaurants')
       } catch (error) {
