@@ -7,9 +7,9 @@ module.exports = {
       'Users', // table name
       'is_admin', // column name
       {
-        type: Sequelize.BOOLEAN,
         defaultValue: false,
-        allowNull: false
+        allowNull: false,
+        type: Sequelize.BOOLEAN
       } // type
     )
     await queryInterface.sequelize.query('ALTER TABLE users MODIFY COLUMN is_admin TINYINT(1) AFTER password;')

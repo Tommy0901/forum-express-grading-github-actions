@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 
-const { staticHandler } = require('../middlewares/express-handler')
 const { authenticated, authenticatedAdmin } = require('../middlewares/auth-handler')
 
 const root = require('./root')
@@ -10,8 +9,6 @@ const signUp = require('./signup')
 const signIn = require('./signin')
 const logOut = require('./logout')
 const restaurants = require('./restaurants')
-
-router.use('/upload', staticHandler('upload'))
 
 router.use('/', root)
 router.use('/admin', authenticatedAdmin, admin)

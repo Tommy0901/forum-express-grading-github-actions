@@ -7,7 +7,7 @@ const routes = require('./routes')
 
 const { sessionHandler } = require('./middlewares/session-handler')
 const { messageHandler } = require('./middlewares/message-handler')
-const { urlencodedHandler } = require('./middlewares/express-handler')
+const { urlencodedHandler, staticHandler } = require('./middlewares/express-handler')
 const { generalErrorHandler } = require('./middlewares/error-handler')
 const { methodOverrideHandler } = require('./middlewares/methodOverride-handler')
 
@@ -26,6 +26,7 @@ app.use(
   passport.session(),
   flash(),
   messageHandler,
+  staticHandler('public'),
   routes,
   generalErrorHandler
 )
