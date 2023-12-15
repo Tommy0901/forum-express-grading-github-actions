@@ -1,4 +1,4 @@
-const { Restaurant } = require('../models')
+const { Restaurant, User } = require('../models')
 const { localFileHandler } = require('../helpers/file-helpers')
 
 const adminController = {
@@ -83,6 +83,34 @@ const adminController = {
         next(error)
       }
     })()
+  },
+  getUsers: (req, res, next) => {
+    (async () => {
+      try {
+        const users = await User.findAll({ raw: true })
+        res.render('admin/users', { users })
+      } catch (error) {
+        next(error)
+      }
+    })()
+  },
+  patchUser: (req, res, next) => {
+    const { id } = req.params
+    const { isAdmin } = req.body;
+    (async () => {
+      try {
+        const user = await User.findByPk(id) // 接著操作 Sequelize 語法，不加 { raw: true }
+        if (!user) throw new Error("user didn't exist!")
+        await user.update({ isAdmin })
+        req.flash('success', "user's role was successfully updated!")
+        res.redirect('/admin/users')
+      } catch (error) {
+        next(error)
+      }
+    })()
+  },
+  registerUser: (req, res) => {
+    res.render('admin/enroll-user')
   }
 }
 module.exports = adminController

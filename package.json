@@ -7,6 +7,7 @@
     "dev": "nodemon app.js",
     "lint": "eslint \"**/*.js\" --fix",
     "dbsetup": "node create-database.js && npx sequelize db:migrate",
+    "seed": "npx sequelize db:seed:all",
     "test": "mocha tests --exit --recursive --timeout 5000"
   },
   "repository": {

@@ -17,14 +17,14 @@ module.exports = {
       console.log(`Image downloaded and saved to upload/${fileNumber}.jpg`)
     }
     await queryInterface.bulkInsert('Restaurants',
-      Array.from({ length: 50 }), (_, i) => ({
+      Array.from({ length: 50 }).map((_, i) => ({
         name: faker.name.findName(),
         tel: faker.phone.phoneNumber(),
         address: faker.address.streetAddress(),
         opening_hours: '08:00',
         image: `/upload/${i + 1 + counts}.jpg`,
         description: faker.lorem.text()
-      })
+      }))
     )
   },
   down: async (queryInterface, Sequelize) => {

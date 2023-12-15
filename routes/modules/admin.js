@@ -4,6 +4,10 @@ const router = express.Router()
 const adminController = require('../../controllers/admin-controller')
 const { upload } = require('../../middlewares/multer')
 
+router.get('/users/new', adminController.registerUser)
+router.patch('/users/:id', adminController.patchUser)
+router.get('/users', adminController.getUsers)
+
 router.get('/restaurants/create', adminController.createRestaurant)
 router.get('/restaurants/:id/edit', adminController.editRestaurant)
 router.delete('/restaurants/:id', adminController.deleteRestaurant)
