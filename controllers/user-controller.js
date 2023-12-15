@@ -7,6 +7,7 @@ const userController = {
     res.render('signup')
   },
   signUp: (req, res, next) => {
+    const isAdmin = req.user?.isAdmin
     const { name, email, password, passwordCheck } = req.body
     if (!name || !email || !password) throw new Error('Please enter name, email and password!')
 
@@ -17,7 +18,7 @@ const userController = {
         if (await User.findOne({ where: { email } })) throw new Error('Email already exists!')
         await User.create({ name, email, password: await bcrypt.hash(password, 10) })
         req.flash('success', '註冊成功!')
-        res.redirect('/signin')
+        res.redirect(isAdmin ? '/admin/users' : '/signin')
       } catch (error) {
         next(error)
       }
