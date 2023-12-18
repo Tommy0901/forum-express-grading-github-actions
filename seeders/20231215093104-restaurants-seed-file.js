@@ -1,7 +1,8 @@
 'use strict'
 const faker = require('faker')
-const axios = require('axios')
 const fs = require('fs')
+
+const { downloadFileHandler } = require('../helpers/download-helpers')
 
 const { Restaurant } = require('../models')
 const { Op } = require('sequelize')
@@ -10,12 +11,8 @@ const { Op } = require('sequelize')
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const counts = await Restaurant.count()
-    for (let i = 0; i < 50; i++) {
-      const fileNumber = i + 1 + counts
-      const response = await axios.get(`https://loremflickr.com/320/240/restaurant,food/?random=${Math.random() * 100}`, { responseType: 'arraybuffer' })
-      fs.writeFileSync(`public/upload/${fileNumber}.jpg`, Buffer.from(response.data))
-      console.log(`Image downloaded and saved to upload/${fileNumber}.jpg`)
-    }
+    const downloadpath = `https://loremflickr.com/320/240/restaurant,food/?random=${Math.random() * 100}`
+    await Promise.all(Array.from({ length: 50 }).map((_, i) => (downloadFileHandler(downloadpath, i + 1 + counts))))
     await queryInterface.bulkInsert('Restaurants',
       Array.from({ length: 50 }).map((_, i) => ({
         name: faker.name.findName(),
@@ -34,7 +31,7 @@ module.exports = {
       fs.unlink(`public/upload/${counts - i}.jpg`, error =>
         error
           ? console.error('Error deleting file:', error)
-          : console.log(`Image upload/${counts}.jpg was deleted`)
+          : console.log(`Image upload/${counts - i}.jpg was deleted`)
       )
     }
     await queryInterface.bulkDelete('Restaurants', { id: { [Op.gt]: id - 50 } })
