@@ -11,6 +11,10 @@ const { Op } = require('sequelize')
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const counts = await Restaurant.count()
+    const categories = await queryInterface.sequelize.query(
+      'SELECT id FROM Categories;',
+      { type: queryInterface.sequelize.QueryTypes.SELECT }
+    )
     const downloadpath = `https://loremflickr.com/320/240/restaurant,food/?random=${Math.random() * 100}`
     await Promise.all(Array.from({ length: 50 }).map((_, i) => (downloadFileHandler(downloadpath, i + 1 + counts))))
     await queryInterface.bulkInsert('Restaurants',
@@ -20,7 +24,8 @@ module.exports = {
         address: faker.address.streetAddress(),
         opening_hours: '08:00',
         image: `/upload/${i + 1 + counts}.jpg`,
-        description: faker.lorem.text()
+        description: faker.lorem.text(),
+        category_id: categories[Math.floor(Math.random() * categories.length)].id
       }))
     )
   },

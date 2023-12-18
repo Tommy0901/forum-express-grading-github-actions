@@ -17,7 +17,7 @@ module.exports = {
         onUpdate: 'CASCADE'
       } // type
     )
-    await queryInterface.sequelize.query('ALTER TABLE restaurants MODIFY COLUMN category_id INT(11) AFTER image;')
+    await queryInterface.sequelize.query('ALTER TABLE restaurants MODIFY COLUMN category_id INT(11) NOT NULL AFTER image;')
   },
 
   async down (queryInterface, Sequelize) {
