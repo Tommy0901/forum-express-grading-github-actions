@@ -15,7 +15,7 @@ passport.use(
             where: { email },
             raw: true
           })
-          user
+          return user
             ? (await bcrypt.compare(password, user.password))
                 ? done(null, user)
                 : done(null, false, {
@@ -24,6 +24,7 @@ passport.use(
                 })
             : done(null, false, { message: 'email 或密碼錯誤' })
         } catch (error) {
+          console.log(error)
           done(error)
         }
       })()
