@@ -14,7 +14,7 @@ const categoryController = {
   },
   postCategory: (req, res, next) => {
     const { name } = req.body
-    if (!name) throw new Error('Category needs name to add.');
+    if (!name) throw new Error('Category name is required!');
     (async () => {
       try {
         await Category.create({ name })
