@@ -1,0 +1,47 @@
+{{> admin-tabs route='categories'}}
+<form class="row row-cols-lg-auto g-3 align-items-center" action="/admin/categories{{#ifCond category null}}{{else}}/{{category.id}}?_method=PUT{{/ifCond}}" method="POST" novalidate>
+  <div class="form-row mb-3">
+    <input class="form-control" type="text" name="name" id="name" placeholder="Enter name" value="{{category.name}}" required>
+  </div>
+  <div class="form-row mb-3">
+    <button type="submit" class="btn {{#ifCond category null}}btn-success{{else}}btn-warning{{/ifCond}}">
+    {{#ifCond category null}}
+      Create
+    </button>
+    {{else}}
+      Update
+    </button>
+    <a class="btn btn-link link-primary" href="/admin/categories">
+      or Create New
+    </a>
+    {{/ifCond}}
+  </div>
+</form>
+<p></p>
+<table class="table align-middle">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Category Name</th>
+      <th scope="col">#</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each categories}}
+      <tr>
+        <th scope="row">{{this.id}}</th>
+        <td>{{this.name}}</td>
+        <td>
+          <button type="button" class="btn btn-link">
+            <a class="btn btn-link link-primary" href="/admin/categories/{{this.id}}">
+              Edit
+            </a>
+          </button>
+          <form action="/admin/categories/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
+            <button type="submit" class="btn btn-link link-danger" onclick="return confirm(`確定要刪除 {{ this.name }} 嗎？`)">Delete</button>
+          </form>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
