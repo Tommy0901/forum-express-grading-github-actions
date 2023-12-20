@@ -8,6 +8,7 @@ const admin = require('./modules/admin')
 const signUp = require('./signup')
 const signIn = require('./signin')
 const logOut = require('./logout')
+const restaurant = require('./restaurant')
 const restaurants = require('./restaurants')
 
 router.use('/', root)
@@ -15,6 +16,7 @@ router.use('/admin', authenticatedAdmin, admin)
 router.use('/signup', signUp)
 router.use('/signin', signIn)
 router.use('/logout', logOut)
+router.use('/restaurant', authenticated, restaurant)
 router.use('/restaurants', authenticated, restaurants)
 
 module.exports = router
