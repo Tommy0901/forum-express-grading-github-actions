@@ -17,8 +17,21 @@ const restaurantController = {
       }
     })()
   },
-  getRestaurant: (req, res) => {
-    res.render('restaurant')
+  getRestaurant: (req, res, next) => {
+    const { id } = req.params;
+    (async () => {
+      try {
+        const restaurant = await Restaurant.findByPk(id, {
+          raw: true,
+          nest: true,
+          include: Category
+        })
+        if (!restaurant) throw new Error("Restaurant didn't exist!")
+        res.render('restaurant', { restaurant })
+      } catch (error) {
+        next(error)
+      }
+    })()
   }
 }
 module.exports = restaurantController
