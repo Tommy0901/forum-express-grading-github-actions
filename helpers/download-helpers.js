@@ -2,7 +2,7 @@ const fs = require('fs') // 引入 fs 模組
 const axios = require('axios')
 
 module.exports = {
-  downloadFileHandler (downloadpath, fileNumber) { // file 是 multer 處理完的檔案
+  downloadImageHandler (downloadpath, fileNumber) { // file 是 multer 處理完的檔案
     return new Promise((resolve, reject) => {
       (async () => {
         try {
