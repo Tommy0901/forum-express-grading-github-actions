@@ -1,18 +1,18 @@
 {{> admin-tabs route='categories'}}
 <div class="d-flex align-items-center pb-2 my-3 text-white-50 bg-purple">
-  <form class="row" action="/admin/categories{{#ifCond category null}}{{else}}/{{category.id}}?_method=PUT{{/ifCond}}" method="POST" novalidate>
+  <form class="row" action="/admin/categories{{#if category}}/{{category.id}}?_method=PUT{{/if}}" method="POST" novalidate>
     <div class="col-auto">
       <input class="form-control" type="text" placeholder="Category name" name="name" value="{{category.name}}" required>
     </div>
     <div class="col-auto">
-      <button class="btn {{#ifCond category null}}btn-success{{else}}btn-warning{{/ifCond}}" type="submit">
+      <button class="btn {{#if category}}btn-warning{{else}}btn-success{{/if}}" type="submit">
       {{#ifCond category null}}
         Create
       </button>
       {{else}}
         Update
       </button>
-      <a class="btn btn-link link-primary" href="/admin/categories">
+      <a class="btn btn-link link-secondary" href="/admin/categories">
         or Create New
       </a>
       {{/ifCond}}

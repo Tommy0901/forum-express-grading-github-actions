@@ -5,7 +5,12 @@ const categoryController = {
     const id = req.params?.id;
     (async () => {
       try {
-        const [categories, category] = await Promise.all([Category.findAll({ raw: true }), Category.findByPk(id, { raw: true })])
+        const [categories, category] = await Promise.all([
+          Category.findAll({ raw: true }),
+          id
+            ? Category.findByPk(id, { raw: true })
+            : null
+        ])
         res.render('admin/categories', { categories, category })
       } catch (error) {
         next(error)
