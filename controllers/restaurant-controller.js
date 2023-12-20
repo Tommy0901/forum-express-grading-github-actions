@@ -18,8 +18,8 @@ const restaurantController = {
     })()
   },
   getRestaurant: (req, res, next) => {
-    const { id } = req.params;
-    (async () => {
+    const { id } = req.params
+    return (async () => {
       try {
         const restaurant = await Restaurant.findByPk(id, { include: Category }) // 接著操作 Sequelize 語法，不加 { raw: true, nest: true }
         if (!restaurant) throw new Error("Restaurant didn't exist!")
@@ -31,8 +31,8 @@ const restaurantController = {
     })()
   },
   getDashboard: (req, res, next) => {
-    const { id } = req.params;
-    (async () => {
+    const { id } = req.params
+    return (async () => {
       try {
         const restaurant = await Restaurant.findByPk(id, {
           raw: true,
