@@ -1,4 +1,4 @@
-const { Category } = require('../models')
+const { Restaurant, Category } = require('../models')
 
 const categoryController = {
   getCategories: (req, res, next) => {
@@ -52,6 +52,7 @@ const categoryController = {
       try {
         const category = await Category.findByPk(id) // 接著操作 Sequelize 語法，不加 { raw: true }
         if (!category) throw new Error("Category didn't exist!")
+        if (await Restaurant.findOne({ where: { categoryId: id } })) throw new Error("Category has been used, can't be deletd")
         await category.destroy()
         req.flash('success', 'category was successfully deleted!')
         res.redirect('/admin/categories')
