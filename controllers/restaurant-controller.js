@@ -1,17 +1,39 @@
 const { Restaurant, Category } = require('../models')
 
+const limit = 12
+
 const restaurantController = {
   getRestaurants: (req, res, next) => {
-    const { category, id } = req.query
-    const categoryId = parseInt(id);
+    const { category, id, page } = req.query
+    const categoryId = +id
+    const currentPage = +page || 1;
     (async () => {
       try {
-        const [restaurantsArr, categories] = await Promise.all([
-          Restaurant.findAll({ raw: true, nest: true, include: Category, ...categoryId ? { where: { categoryId } } : {} }),
+        const [restaurantsArr, restaurantCounts, categories] = await Promise.all([
+          Restaurant.findAll({
+            raw: true,
+            nest: true,
+            include: Category,
+            ...categoryId ? { where: { categoryId } } : {},
+            limit,
+            offset: (currentPage - 1) * limit
+          }),
+          Restaurant.count(),
           Category.findAll({ raw: true })
         ])
         const restaurants = restaurantsArr.map(r => ({ ...r, description: r.description.substring(0, 50) }))
-        res.render('restaurants', { restaurants, categories, category })
+        const totalPages = Math.ceil(restaurantCounts / limit)
+        const pages = Array.from(Array(totalPages), (_, i) => i + 1)
+        res.render('restaurants', {
+          restaurants,
+          categories,
+          category,
+          pages,
+          prev: currentPage - 1 ? currentPage - 1 : currentPage,
+          next: currentPage < totalPages ? currentPage + 1 : currentPage,
+          currentPage,
+          totalPages
+        })
       } catch (error) {
         next(error)
       }
