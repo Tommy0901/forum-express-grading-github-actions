@@ -6,7 +6,7 @@
     "start": "node app.js",
     "dev": "nodemon app.js",
     "lint": "eslint \"**/*.js\" --fix",
-    "dbsetup": "node create-database.js && npx sequelize db:migrate && mkdir temp public/upload",
+    "dbsetup": "node create-database.js && npx sequelize db:migrate && mkdir temp public\\upload",
     "seed": "npx sequelize db:seed:all",
     "test": "mocha tests --exit --recursive --timeout 5000"
   },
