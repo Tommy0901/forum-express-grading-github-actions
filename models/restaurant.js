@@ -11,9 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate (models) {
       // define association here
-      Restaurant.belongsTo(models.Category, {
-        foreignKey: 'categoryId' // 此參數可以省略，因為未設定時，會利用關聯對象的 model 名稱(category) 加上 id 作為 FK
-      })
+      Restaurant.belongsTo(models.Category) // 省略第2個參數 { foreignKey: 'categoryId' } 的設定時，自動利用關聯對象的 model 名稱(Category) 加上 id 作為預設的 FK
+      Restaurant.hasMany(models.Comment) // 省略第2個參數 { foreignKey: 'userId' } 的設定
     }
   }
   Restaurant.init({
