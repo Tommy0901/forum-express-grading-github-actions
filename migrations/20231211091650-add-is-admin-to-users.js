@@ -17,7 +17,7 @@ module.exports = {
     //     type: Sequelize.BOOLEAN
     //   } // type
     // )
-    // await queryInterface.sequelize.query('ALTER TABLE users MODIFY COLUMN is_admin TINYINT(1) AFTER password;')
+    // await queryInterface.sequelize.query('ALTER TABLE users MODIFY COLUMN is_admin TINYINT DEFAULT 0 NOT NULL AFTER password;')
   },
 
   async down (queryInterface, Sequelize) {

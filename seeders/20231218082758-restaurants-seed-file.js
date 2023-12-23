@@ -15,7 +15,7 @@ module.exports = {
       'SELECT id FROM Categories;',
       { type: queryInterface.sequelize.QueryTypes.SELECT }
     )
-    const downloadpath = `https://loremflickr.com/320/240/restaurant,food/?random=${Math.random() * 100}`
+    const downloadpath = `https://loremflickr.com/320/240/food?/random=${Math.random() * 100}`
     await Promise.all(Array.from({ length: 50 }).map((_, i) => (downloadImageHandler(downloadpath, i + 1 + counts))))
     await queryInterface.bulkInsert('Restaurants',
       Array.from({ length: 50 }).map((_, i) => ({
