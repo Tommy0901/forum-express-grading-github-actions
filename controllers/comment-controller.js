@@ -16,6 +16,20 @@ const commentController = {
         next(error)
       }
     })()
+  },
+  deleteComment: (req, res, next) => {
+    const { id } = req.params;
+    (async () => {
+      try {
+        const comment = await Comment.findByPk(id) // 接著操作 Sequelize 語法，不加 { raw: true }
+        if (!comment) throw new Error("The comment didn't exist!")
+        await comment.destroy() // const deletedComment = await comment.destroy()
+        req.flash('success', 'comment was successfully deleted!')
+        res.redirect('back') // res.redirect(`/restaurants/${deletedComment.restaurantId}`))
+      } catch (error) {
+        next(error)
+      }
+    })()
   }
 }
 module.exports = commentController

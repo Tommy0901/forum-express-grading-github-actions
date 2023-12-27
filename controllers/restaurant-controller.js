@@ -32,9 +32,12 @@ const restaurantController = {
     const { id } = req.params;
     (async () => {
       try {
-        const restaurant = await Restaurant.findByPk(id, { include: [Category, { model: Comment, include: User }] }) // 接著操作 Sequelize 語法，不加 { raw: true, nest: true }
+        const restaurant = await Restaurant.findByPk(id, {
+          include: [Category, { model: Comment, include: User }],
+          order: [[Comment, 'createdAt', 'DESC']]
+        }) // 接著操作 Sequelize 語法，不加 { raw: true, nest: true }
         if (!restaurant) throw new Error("Restaurant didn't exist!")
-        await restaurant.increment('viewCount')
+        await restaurant.increment('viewCount') // 幫 viewCount 欄位 + 1 ，改變第二個參數預設 { by: 1 } 可調整間距
         res.render('restaurant', { restaurant: restaurant.toJSON() })
       } catch (error) {
         next(error)
@@ -46,12 +49,10 @@ const restaurantController = {
     (async () => {
       try {
         const restaurant = await Restaurant.findByPk(id, {
-          raw: true,
-          nest: true,
-          include: Category
+          include: [Category, Comment]
         })
         if (!restaurant) throw new Error("Restaurant didn't exist!")
-        res.render('dashboard', { restaurant })
+        res.render('dashboard', { restaurant: restaurant.toJSON() })
       } catch (error) {
         next(error)
       }
