@@ -5,7 +5,7 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     await queryInterface.sequelize.query(`
     ALTER TABLE Restaurants
-    ADD COLUMN image VARCHAR AFTER address`
+    ADD COLUMN image VARCHAR(255) AFTER address`
     )
 
     // await queryInterface.addColumn(

@@ -5,13 +5,13 @@ module.exports = {
     await queryInterface.sequelize.query(`
     CREATE TABLE IF NOT EXISTS Restaurants (
       id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-      name VARCHAR NOT NULL,
-      tel VARCHAR NOT NULL,
-      opening_hours VARCHAR,
+      name VARCHAR(255) NOT NULL,
+      tel VARCHAR(255) NOT NULL,
+      opening_hours VARCHAR(255),
       description TEXT,
-      address VARCHAR NOT NULL,
+      address VARCHAR(255) NOT NULL,
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )`)
 
     // await queryInterface.createTable('Restaurants', {

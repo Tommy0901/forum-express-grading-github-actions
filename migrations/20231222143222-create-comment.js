@@ -27,10 +27,22 @@ module.exports = {
     //   },
     //   user_id: {
     //     allowNull: false,
+    //     references: {
+    //       model: 'Users', // table name
+    //       key: 'id' // column name
+    //     },
+    //     onDelete: 'RESTRICT',
+    //     onUpdate: 'CASCADE',
     //     type: Sequelize.INTEGER
     //   },
     //   restaurant_id: {
     //     allowNull: false,
+    //     references: {
+    //       model: 'Restaurants', // table name
+    //       key: 'id' // column name
+    //     },
+    //     onDelete: 'RESTRICT',
+    //     onUpdate: 'CASCADE',
     //     type: Sequelize.INTEGER
     //   },
     //   created_at: {

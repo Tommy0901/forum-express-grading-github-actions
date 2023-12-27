@@ -5,9 +5,9 @@ module.exports = {
     await queryInterface.sequelize.query(`
     CREATE TABLE IF NOT EXISTS Categories (
       id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
-      name VARCHAR UNIQUE NOT NULL,
+      name VARCHAR(255) UNIQUE NOT NULL,
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     )`)
 
     // await queryInterface.createTable('Categories', {

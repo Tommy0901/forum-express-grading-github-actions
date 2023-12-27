@@ -11,7 +11,7 @@ passport.use(
       (async () => {
         try {
           const user = await User.findOne({
-            attributes: ['id', 'name', 'email', 'password'],
+            attributes: ['id', 'name', 'email', 'password'], // 設定 passport.serializeUser 資料取得的欄位
             where: { email },
             raw: true
           })
@@ -33,7 +33,7 @@ passport.use(
 
 passport.serializeUser((user, done) => {
   const { id } = user
-  done(null, id)
+  done(null, id) // id 將作為 passport.deserializeUser 搜尋使用者資料的索引值
 })
 
 passport.deserializeUser((id, done) => {

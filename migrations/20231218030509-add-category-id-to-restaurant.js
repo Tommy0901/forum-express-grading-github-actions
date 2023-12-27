@@ -9,7 +9,7 @@ module.exports = {
     ADD CONSTRAINT fk_category_id FOREIGN KEY (category_id) REFERENCES Categories(id) ON UPDATE CASCADE`
     )
 
-    // await queryInterface.addColumn(F
+    // await queryInterface.addColumn(
     //   'Restaurants', // table name
     //   'category_id', // column name
     //   {
