@@ -12,8 +12,8 @@ module.exports = {
     authHelpers.ensureAuthenticated(req)
       ? authHelpers.getUser(req).isAdmin
         ? next()
-        : res.redirect('back')
-      : res.redirect('/')
+        : res.redirect('/')
+      : res.redirect('/signin')
   },
   passportAuthLocal
 }

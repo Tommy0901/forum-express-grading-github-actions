@@ -29,10 +29,9 @@ const restaurantController = {
     })()
   },
   getRestaurant: (req, res, next) => {
-    const { id } = req.params;
-    (async () => {
+    return (async () => {
       try {
-        const restaurant = await Restaurant.findByPk(id, {
+        const restaurant = await Restaurant.findByPk(req.params.id, {
           include: [Category, { model: Comment, include: User }],
           order: [[Comment, 'createdAt', 'DESC']]
         }) // 接著操作 Sequelize 語法，不加 { raw: true, nest: true }
@@ -45,10 +44,9 @@ const restaurantController = {
     })()
   },
   getDashboard: (req, res, next) => {
-    const { id } = req.params;
-    (async () => {
+    return (async () => {
       try {
-        const restaurant = await Restaurant.findByPk(id, {
+        const restaurant = await Restaurant.findByPk(req.params.id, {
           include: [Category, Comment]
         })
         if (!restaurant) throw new Error("Restaurant didn't exist!")
