@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs')
 
 const { User } = require('../models')
 
+const { localFileHandler } = require('../helpers/file-helpers')
+
 const userController = {
   signUpPage: (req, res) => {
     res.render('signup')
@@ -39,12 +41,56 @@ const userController = {
       }
     })()
   },
-  logout: (req, res, next) => {
+  logout: (req, res) => {
     req.logout(error => {
       if (error) throw new Error('Logout failed. Please try again!')
       else req.flash('success', '登出成功!')
       res.redirect('/signin')
     })
+  },
+  getUser: (req, res, next) => {
+    const { id } = req.params;
+    (async () => {
+      try {
+        const userProfileData = await User.findByPk(id, { raw: true })
+        res.render('users/profile', { userProfileData })
+      } catch (error) {
+        next(error)
+      }
+    })()
+  },
+  editUser: (req, res, next) => {
+    const { id } = req.params
+    if (+id !== req.user.id) throw new Error('Permission denied!');
+    (async () => {
+      try {
+        const user = await User.findByPk(id, { raw: true })
+        res.render('users/edit', { user })
+      } catch (error) {
+        next(error)
+      }
+    })()
+  },
+  putUser: (req, res, next) => {
+    const { file } = req
+    const { id } = req.params
+    if (+id !== req.user.id) {
+      req.flash('error', 'Update failed! Insufficient permissions.')
+      return res.redirect(`/users/${id}`)
+    }
+    const { name } = req.body
+    if (!name) throw new Error('Please enter user name.');
+    (async () => {
+      try {
+        const [filePath, user] = await Promise.all([localFileHandler(file), User.findByPk(id)])
+        if (!user) throw new Error("The user didn't exist!")
+        await user.update({ name, image: filePath || user.image })
+        req.flash('success', 'user profile was successfully updated!')
+        res.redirect(`/users/${id}`)
+      } catch (error) {
+        next(error)
+      }
+    })()
   }
 }
 module.exports = userController
