@@ -62,6 +62,8 @@ const restaurantController = {
     const { name } = req.query;
     (async () => {
       try {
+        const category = name ? await Category.findOne({ where: { name } }) : undefined
+        const categoryId = category?.id
         const [restaurantsArr, comments, categories] = await Promise.all([
           Restaurant.findAll({
             limit: 10,
@@ -73,7 +75,7 @@ const restaurantController = {
           Comment.findAll({
             limit: 10,
             order: [['createdAt', 'DESC']],
-            include: [{ model: Restaurant, include: Category }, User],
+            include: [{ model: Restaurant, include: Category, ...categoryId ? { where: { categoryId } } : {} }, User],
             raw: true,
             nest: true
           }),

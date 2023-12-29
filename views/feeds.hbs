@@ -52,10 +52,14 @@
       <div class="card-body">
         {{#each comments}}
           <div>
-            <h5>
-              <a class="link-primary" href="/restaurant/{{this.Restaurant.id}}">{{this.Restaurant.name}}</a>
-              <small class="fs-6 ms-2">&lt;{{this.Restaurant.Category.name}}&gt;</small>
-            </h5>
+            <h4>
+              <div class="d-flex mt-2" style="align-items: center;">
+                <a class="link-primary" href="/restaurant/{{this.Restaurant.id}}">{{this.Restaurant.name}}</a>
+                <small class="fs-6 ms-2">
+                  <a class="nav-link" href="?name={{this.Restaurant.Category.name}}">&lt;{{this.Restaurant.Category.name}}&gt;</a>
+                </small>
+              </div>
+            </h4>
             <p class="my-4" style="white-space: break-spaces;">{{this.text}}</p>
             - <a class="link-secondary" href="/users/{{this.User.id}}">{{this.User.name}}</a>
             <small>at {{relativeTimeFromNow this.createdAt}}</small>
