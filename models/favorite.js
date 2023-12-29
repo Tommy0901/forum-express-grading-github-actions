@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
-  class Category extends Model {
+  class Favorite extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,15 +11,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate (models) {
       // define association here
-      Category.hasMany(models.Restaurant) // 省略第2個參數 { foreignKey: 'categoryId' } 的設定
     }
   }
-  Category.init({
-    name: DataTypes.STRING
+  Favorite.init({
+    userId: DataTypes.INTEGER,
+    restaurantId: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'Category',
+    modelName: 'Favorite',
     underscored: true
   })
-  return Category
+  return Favorite
 }
