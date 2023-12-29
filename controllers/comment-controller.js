@@ -3,7 +3,7 @@ const { User, Restaurant, Comment } = require('../models')
 const commentController = {
   postComment: (req, res, next) => {
     const { restaurantId, text } = req.body
-    const { id } = req.user;
+    const { id } = req.params;
     (async () => {
       try {
         const [user, restaurant] = await Promise.all([User.findByPk(id), Restaurant.findByPk(restaurantId)])
