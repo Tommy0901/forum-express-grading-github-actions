@@ -21,7 +21,12 @@ const restaurantController = {
           }),
           Category.findAll({ raw: true })
         ])
-        const restaurants = restObject.rows.map(r => ({ ...r, description: r.description.substring(0, 50) }))
+        const favoritedRestaurantsId = req.user?.FavoritedRestaurants.map(fr => fr.id)
+        const restaurants = restObject.rows.map(r => ({
+          ...r,
+          description: r.description.substring(0, 50),
+          isFavorited: favoritedRestaurantsId.includes(r.id)
+        }))
         res.render('restaurants', { restaurants, categories, name, ...getPagination(limit, page, restObject.count) })
       } catch (error) {
         next(error)
@@ -33,12 +38,16 @@ const restaurantController = {
     (async () => {
       try {
         const restaurant = await Restaurant.findByPk(id, {
-          include: [Category, { model: Comment, include: User }],
+          include: [Category, { model: Comment, include: User }, { model: User, as: 'FavoritedUsers' }],
           order: [[Comment, 'createdAt', 'DESC']]
         }) // 接著操作 Sequelize 語法，不加 { raw: true, nest: true } ，另外 { raw: true } 本身也會破壞一對多的條件
         if (!restaurant) throw new Error("Restaurant didn't exist!")
         await restaurant.increment('viewCount') // 幫 viewCount 欄位 + 1 ，改變第二個參數預設 { by: 1 } 可調整間距
-        res.render('restaurant', { restaurant: restaurant.toJSON() })
+        res.render('restaurant', {
+          restaurant: restaurant.toJSON(),
+          // isFavorited: req.user?.FavoritedRestaurants.some(fr => fr.id === +id)
+          isFavorited: restaurant.FavoritedUsers.some(fu => fu.id === req.user.id)
+        })
       } catch (error) {
         next(error)
       }
