@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 
-const { User } = require('../models')
+const { User, Restaurant, Favorite } = require('../models')
 
 const { localFileHandler } = require('../helpers/file-helpers')
 
@@ -87,6 +87,39 @@ const userController = {
         await user.update({ name, image: filePath || user.image })
         req.flash('success', 'user profile was successfully updated!')
         res.redirect(`/users/${id}`)
+      } catch (error) {
+        next(error)
+      }
+    })()
+  },
+  addFavorite: (req, res, next) => {
+    const { id: userId } = req.user
+    const { restaurantId } = req.params;
+    (async () => {
+      try {
+        const [restaurant, favorite] = await Promise.all([
+          Restaurant.findByPk(restaurantId),
+          Favorite.findOne({ where: { userId, restaurantId } })
+        ])
+        if (!restaurant) throw new Error("Restaurant didn't exist!")
+        if (favorite) throw new Error('You have favorited this restaurant!')
+        await Favorite.create({ userId, restaurantId })
+        req.flash('success', 'this restaurant has been successfully bookmarked!')
+        res.redirect('back')
+      } catch (error) {
+        next(error)
+      }
+    })()
+  },
+  removeFavorite: (req, res, next) => {
+    const { id: userId } = req.user
+    const { restaurantId } = req.params;
+    (async () => {
+      try {
+        await Favorite.destroy({ where: { userId, restaurantId } })
+          ? req.flash('success', 'this restaurant has been successfully removed from bookmarks!')
+          : req.flash('error', "You haven't favorited this restaurant!")
+        res.redirect('back')
       } catch (error) {
         next(error)
       }
