@@ -128,7 +128,7 @@ const userController = {
   addLike: (req, res, next) => {
     const { id: userId } = req.user
     const { restaurantId } = req.params;
-    (async () => {
+    return (async () => {
       try {
         const [restaurant, like] = await Promise.all([
           Restaurant.findByPk(restaurantId),
@@ -147,7 +147,7 @@ const userController = {
   removeLike: (req, res, next) => {
     const { id: userId } = req.user
     const { restaurantId } = req.params;
-    (async () => {
+    return (async () => {
       try {
         await Like.destroy({ where: { userId, restaurantId } })
           ? req.flash('success', 'this restaurant has been successfully unliked!')
