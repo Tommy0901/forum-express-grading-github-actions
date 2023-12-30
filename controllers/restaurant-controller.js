@@ -22,10 +22,12 @@ const restaurantController = {
           Category.findAll({ raw: true })
         ])
         const favoritedRestaurantsId = req.user?.FavoritedRestaurants.map(fr => fr.id)
+        const likedRestaurantsId = req.user?.LikedRestaurants.map(lr => lr.id)
         const restaurants = restObject.rows.map(r => ({
           ...r,
           description: r.description.substring(0, 50),
-          isFavorited: favoritedRestaurantsId.includes(r.id)
+          isFavorited: favoritedRestaurantsId.includes(r.id),
+          isLiked: likedRestaurantsId.includes(r.id)
         }))
         res.render('restaurants', { restaurants, categories, name, ...getPagination(limit, page, restObject.count) })
       } catch (error) {
@@ -45,8 +47,8 @@ const restaurantController = {
         await restaurant.increment('viewCount') // 幫 viewCount 欄位 + 1 ，改變第二個參數預設 { by: 1 } 可調整間距
         res.render('restaurant', {
           restaurant: restaurant.toJSON(),
-          // isFavorited: req.user?.FavoritedRestaurants.some(fr => fr.id === +id)
-          isFavorited: restaurant.FavoritedUsers.some(fu => fu.id === req.user.id)
+          isFavorited: restaurant.FavoritedUsers.some(fu => fu.id === req.user.id),
+          isLiked: req.user?.LikedRestaurants.some(lr => lr.id === +id)
         })
       } catch (error) {
         next(error)
@@ -58,7 +60,7 @@ const restaurantController = {
     (async () => {
       try {
         const restaurant = await Restaurant.findByPk(id, {
-          include: [Category, Comment]
+          include: [Category, Comment, { model: User, as: 'FavoritedUsers' }]
         })
         if (!restaurant) throw new Error("Restaurant didn't exist!")
         res.render('dashboard', { restaurant: restaurant.toJSON() })
