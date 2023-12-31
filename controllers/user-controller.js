@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 
-const { User } = require('../models')
+const { User, Restaurant, Comment } = require('../models')
 
 const { localFileHandler } = require('../helpers/file-helpers')
 
@@ -43,8 +43,10 @@ const userController = {
   getUser: (req, res, next) => {
     return (async () => {
       try {
-        const user = await User.findByPk(req.params.id, { raw: true })
-        res.render('users/profile', { user })
+        const user = await User.findByPk(req.params.id, { include: { model: Comment, include: Restaurant } })
+        user.dataValues.commentedRestaurants = user.toJSON().Comments
+          ?.map(c => c.Restaurant).filter((item, index, self) => self.findIndex(obj => obj.id === item.id) === index)
+        res.render('users/profile', { user: user.toJSON() })
       } catch (error) {
         next(error)
       }
