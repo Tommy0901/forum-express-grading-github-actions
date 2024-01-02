@@ -29,17 +29,9 @@ const userController = {
   signInPage: (req, res) => {
     res.render('signin')
   },
-  signIn: (req, res, next) => {
-    const { id } = req.user;
-    (async () => {
-      try {
-        const user = await User.findByPk(id, { raw: true })
-        req.flash('success', '登入成功!')
-        res.redirect(user.isAdmin ? '/admin/restaurants' : '/restaurants')
-      } catch (error) {
-        next(error)
-      }
-    })()
+  signIn: (req, res) => {
+    req.flash('success_messages', '成功登入！')
+    res.redirect('/restaurants')
   },
   logout: (req, res) => {
     req.logout(error => {
@@ -49,26 +41,23 @@ const userController = {
     })
   },
   getUser: (req, res, next) => {
-    const { id } = req.params;
-    (async () => {
+    return (async () => {
       try {
-        const user = await User.findByPk(id, { include: { model: Comment, include: Restaurant } })
+        const user = await User.findByPk(req.params.id, { include: { model: Comment, include: Restaurant } })
         user.dataValues.commentedRestaurants = user.toJSON().Comments
           ?.map(c => c.Restaurant).filter((item, index, self) => self.findIndex(obj => obj.id === item.id) === index)
         // user.dataValues.commentedRestaurants = user.toJSON().Comments
         //   ?.reduce((acc, c) => { if (!acc.some(r => r.id === c.restaurantId)) acc.push(c.Restaurant); return acc }, [])
-        res.render('users/profile', { userProfileData: user.toJSON() })
+        res.render('users/profile', { user: user.toJSON() })
       } catch (error) {
         next(error)
       }
     })()
   },
   editUser: (req, res, next) => {
-    const { id } = req.params
-    if (+id !== req.user.id) throw new Error('Permission denied!');
-    (async () => {
+    return (async () => {
       try {
-        const user = await User.findByPk(id, { raw: true })
+        const user = await User.findByPk(req.params.id, { raw: true })
         res.render('users/edit', { user })
       } catch (error) {
         next(error)
@@ -77,20 +66,18 @@ const userController = {
   },
   putUser: (req, res, next) => {
     const { file } = req
-    const { id } = req.params
-    if (+id !== req.user.id) {
+    if (+req.params.id !== req.user.id) {
       req.flash('error', 'Update failed! Insufficient permissions.')
-      return res.redirect(`/users/${id}`)
+      return res.redirect(`/users/${req.params.id}`)
     }
-    const { name } = req.body
-    if (!name) throw new Error('Please enter user name.');
-    (async () => {
+    if (!req.body.name) throw new Error('Please enter user name.')
+    return (async () => {
       try {
-        const [filePath, user] = await Promise.all([localFileHandler(file), User.findByPk(id)])
+        const [filePath, user] = await Promise.all([localFileHandler(file), User.findByPk(req.params.id)])
         if (!user) throw new Error("The user didn't exist!")
-        await user.update({ name, image: filePath || user.image })
-        req.flash('success', 'user profile was successfully updated!')
-        res.redirect(`/users/${id}`)
+        await user.update({ name: req.body.name, image: filePath || user.image })
+        req.flash('success_messages', '使用者資料編輯成功')
+        res.redirect(`/users/${req.params.id}`)
       } catch (error) {
         next(error)
       }
@@ -128,8 +115,8 @@ const userController = {
   },
   addLike: (req, res, next) => {
     const { id: userId } = req.user
-    const { restaurantId } = req.params;
-    (async () => {
+    const { restaurantId } = req.params
+    return (async () => {
       try {
         const [restaurant, like] = await Promise.all([
           Restaurant.findByPk(restaurantId),
@@ -147,8 +134,8 @@ const userController = {
   },
   removeLike: (req, res, next) => {
     const { id: userId } = req.user
-    const { restaurantId } = req.params;
-    (async () => {
+    const { restaurantId } = req.params
+    return (async () => {
       try {
         await Like.destroy({ where: { userId, restaurantId } })
           ? req.flash('success', 'this restaurant has been successfully unliked!')

@@ -5,6 +5,7 @@ const restController = require('../controllers/restaurant-controller')
 
 router.get('/feeds', restController.getFeeds)
 router.get('/top', restController.getTopRestaurants)
+router.get('/:id/dashboard', restController.getDashboard)
 router.get('/', restController.getRestaurants)
 
 module.exports = router

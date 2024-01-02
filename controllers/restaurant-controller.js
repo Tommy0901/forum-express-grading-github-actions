@@ -36,10 +36,9 @@ const restaurantController = {
     })()
   },
   getRestaurant: (req, res, next) => {
-    const { id } = req.params;
-    (async () => {
+    return (async () => {
       try {
-        const restaurant = await Restaurant.findByPk(id, {
+        const restaurant = await Restaurant.findByPk(req.params.id, {
           include: [Category, { model: Comment, include: User }, { model: User, as: 'FavoritedUsers' }],
           order: [[Comment, 'createdAt', 'DESC']]
         }) // 接著操作 Sequelize 語法，不加 { raw: true, nest: true } ，另外 { raw: true } 本身也會破壞一對多的條件
@@ -48,7 +47,7 @@ const restaurantController = {
         res.render('restaurant', {
           restaurant: restaurant.toJSON(),
           isFavorited: restaurant.FavoritedUsers.some(fu => fu.id === req.user.id),
-          isLiked: req.user.LikedRestaurants?.some(lr => lr.id === +id)
+          isLiked: req.user.LikedRestaurants?.some(lr => lr.id === +req.params.id)
         })
       } catch (error) {
         next(error)
@@ -56,10 +55,9 @@ const restaurantController = {
     })()
   },
   getDashboard: (req, res, next) => {
-    const { id } = req.params;
-    (async () => {
+    return (async () => {
       try {
-        const restaurant = await Restaurant.findByPk(id, {
+        const restaurant = await Restaurant.findByPk(req.params.id, {
           include: [Category, Comment, { model: User, as: 'FavoritedUsers' }]
         })
         if (!restaurant) throw new Error("Restaurant didn't exist!")
