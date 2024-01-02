@@ -5,6 +5,7 @@ const userController = require('../controllers/user-controller')
 
 const { upload } = require('../middlewares/multer')
 
+router.get('/top', userController.getTopUsers)
 router.get('/:id/edit', userController.editUser)
 router.get('/:id', userController.getUser)
 router.put('/:id', upload.single('image'), userController.putUser)
