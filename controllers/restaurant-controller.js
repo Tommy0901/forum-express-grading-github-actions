@@ -21,8 +21,8 @@ const restaurantController = {
           }),
           Category.findAll({ raw: true })
         ])
-        const favoritedRestaurantsId = req.user?.FavoritedRestaurants.map(fr => fr.id)
-        const likedRestaurantsId = req.user?.LikedRestaurants.map(lr => lr.id)
+        const favoritedRestaurantsId = req.user.FavoritedRestaurants?.map(fr => fr.id)
+        const likedRestaurantsId = req.user.LikedRestaurants?.map(lr => lr.id)
         const restaurants = restObject.rows.map(r => ({
           ...r,
           description: r.description.substring(0, 50),
@@ -48,7 +48,7 @@ const restaurantController = {
         res.render('restaurant', {
           restaurant: restaurant.toJSON(),
           isFavorited: restaurant.FavoritedUsers.some(fu => fu.id === req.user.id),
-          isLiked: req.user?.LikedRestaurants.some(lr => lr.id === +id)
+          isLiked: req.user.LikedRestaurants?.some(lr => lr.id === +id)
         })
       } catch (error) {
         next(error)
