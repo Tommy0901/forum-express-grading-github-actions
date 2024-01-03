@@ -13,8 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Restaurant.belongsTo(models.Category, { foreignKey: 'categoryId' })
       Restaurant.hasMany(models.Comment, { foreignKey: 'restaurantId' })
-      Restaurant.belongsTo(models.Category) // 省略第2個參數 { foreignKey: 'categoryId' } 的設定時，自動利用關聯對象的 model 名稱(Category) 加上 id 作為預設的 FK
-      Restaurant.hasMany(models.Comment) // 省略第2個參數 { foreignKey: 'restaurantId' } 的設定
+      Restaurant.hasMany(models.Favorite, { foreignKey: 'restaurantId' })
       Restaurant.belongsToMany(models.User, {
         through: models.Favorite,
         foreignKey: 'restaurantId',

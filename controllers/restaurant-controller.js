@@ -1,4 +1,4 @@
-const { User, Restaurant, Category, Comment } = require('../models')
+const { User, Restaurant, Category, Comment, Favorite } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helper')
 
 const DEFAULT_LIMIT = 9
@@ -104,16 +104,15 @@ const restaurantController = {
   getTopRestaurants: (req, res, next) => {
     (async () => {
       try {
-        const restaurantsArr = await Restaurant.findAll({ include: { model: User, as: 'FavoritedUsers' } })
+        const restaurantsArr = await Restaurant.findAll({ limit: 10, include: Favorite })
         const restaurants = restaurantsArr
           .map(r => ({
             ...r.toJSON(),
             description: r.description.substring(0, 50),
-            favoritesCount: r.FavoritedUsers.length,
+            favoritesCount: r.Favorites.length,
             isFavorited: req.user.FavoritedRestaurants?.map(fr => fr.id).includes(r.id)
           }))
           .sort((a, b) => b.favoritesCount - a.favoritesCount)
-          .slice(0, 10)
         res.render('top-restaurants', { restaurants })
       } catch (error) {
         next(error)

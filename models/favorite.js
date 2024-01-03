@@ -11,11 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate (models) {
       // define association here
+      Favorite.belongsTo(models.Restaurant, { foreignKey: 'restaurantId' })
     }
   }
   Favorite.init({
     userId: DataTypes.INTEGER,
-    restaurantId: DataTypes.INTEGER
+    // restaurantId: DataTypes.INTEGER // 於上方 associate 有設定關聯外鍵時可省略
   }, {
     sequelize,
     modelName: 'Favorite',
