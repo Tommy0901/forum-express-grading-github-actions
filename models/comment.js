@@ -11,14 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate (models) {
       // define association here
-      Comment.belongsTo(models.User) // 省略第2個參數 { foreignKey: 'userId' } 的設定
-      Comment.belongsTo(models.Restaurant) // 省略第2個參數 { foreignKey: 'restaurantId' } 的設定
+      Comment.belongsTo(models.User, { foreignKey: 'userId' })
+      Comment.belongsTo(models.Restaurant, { foreignKey: 'restaurantId' })
     }
   }
   Comment.init({
     text: DataTypes.STRING,
-    userId: DataTypes.INTEGER, // 修改這裡
-    restaurantId: DataTypes.INTEGER // 修改這裡
+    // userId: DataTypes.INTEGER, // 於上方 associate 有設定關聯外鍵時可省略
+    // restaurantId: DataTypes.INTEGER // 於上方 associate 有設定關聯外鍵時可省略
   }, {
     sequelize,
     modelName: 'Comment',
