@@ -52,11 +52,19 @@ const userController = {
     const { id } = req.params;
     (async () => {
       try {
-        const user = await User.findByPk(id, { include: { model: Comment, include: Restaurant } })
+        const user = await User.findByPk(id, {
+          include: [
+            { model: Comment, include: Restaurant },
+            { model: Restaurant, as: 'FavoritedRestaurants' },
+            { model: User, as: 'Followings' },
+            { model: User, as: 'Followers' }
+          ]
+        })
         user.dataValues.commentedRestaurants = user.toJSON().Comments
           ?.map(c => c.Restaurant).filter((item, index, self) => self.findIndex(obj => obj.id === item.id) === index)
         // user.dataValues.commentedRestaurants = user.toJSON().Comments
         //   ?.reduce((acc, c) => { if (!acc.some(r => r.id === c.restaurantId)) acc.push(c.Restaurant); return acc }, [])
+        user.dataValues.isFollowed = user.toJSON().Followers?.some(f => f.id === req.user.id)
         res.render('users/profile', { userProfileData: user.toJSON() })
       } catch (error) {
         next(error)

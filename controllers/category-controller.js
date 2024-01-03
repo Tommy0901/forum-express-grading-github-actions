@@ -22,6 +22,8 @@ const categoryController = {
     if (!name) throw new Error('Category name is required!');
     (async () => {
       try {
+        const category = await Category.findOne({ where: { name } })
+        if (category) throw new Error('Category name has been used!')
         await Category.create({ name })
         req.flash('success', 'category was successfully added.')
         res.redirect('/admin/categories')

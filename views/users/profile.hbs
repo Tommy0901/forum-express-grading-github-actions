@@ -16,11 +16,24 @@
           {{userProfileData.email}}
         </p>
         <ul class="list-unstyled list-inline">
-          <li><strong>{{userProfileData.commentedRestaurants.length}}</strong> 已評論餐廳</li>
+          <li><strong>{{userProfileData.commentedRestaurants.length}}</strong> 已評論餐廳</li>  
+          <li><strong>{{userProfileData.FavoritedRestaurants.length}}</strong> 收藏的餐廳</li>
+          <li><strong>{{userProfileData.Followings.length}}</strong> followings (追蹤者)</li>
+          <li><strong>{{userProfileData.Followers.length}}</strong> followers (追隨者)</li>
         </ul>
         <p>
           {{#ifCond userProfileData.id user.id }}
             <a href="/users/{{userProfileData.id}}/edit"><button type="submit" class="btn btn-primary">edit</button></a>
+            {{else}}
+              {{#if userProfileData.isFollowed }}
+                <form action="/following/{{userProfileData.id}}?_method=DELETE" method="POST" style="display: contents;">
+                  <button type="submit" class="btn btn-danger">取消追蹤</button>
+                </form>
+              {{else}}
+                <form action="/following/{{userProfileData.id}}" method="POST" style="display: contents;">
+                  <button type="submit" class="btn btn-primary">追蹤</button>
+                </form>
+              {{/if}}
           {{/ifCond}}
           <a class="btn btn-outline-secondary" href="javascript:history.back()">Back</a>
         </p>
@@ -29,6 +42,45 @@
   </div>
 </div>
 <div class="col-md-8">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <strong>{{userProfileData.Followings.length}}</strong> followings (追蹤者)
+      </div>
+      <div class="card-body">
+        {{#each userProfileData.Followings}}
+          <a href="/users/{{this.id}}" class="text-decoration-none">
+            {{#if this.image}}
+              <img src="{{this.image}}" width="60" height="60" class="avatar"
+                style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1;" />
+            {{else}}
+              <img src="https://via.placeholder.com/60" width="60" height="60" class="avatar"
+                style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1;" />
+            {{/if}}
+          </a>
+        {{/each}}
+      </div>
+    </div>
+    <br />
+    <div class="card">
+      <div class="card-header">
+        <strong>{{userProfileData.Followers.length}}</strong> followers (追隨者)
+      </div>
+      <div class="card-body">
+        {{#each userProfileData.Followers}}
+          <a href="/users/{{this.id}}" class="text-decoration-none">
+            {{#if this.image}}
+              <img src="{{this.image}}" width="60" height="60" class="avatar"
+                style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1;" />
+            {{else}}
+              <img src="https://via.placeholder.com/60" width="60" height="60" class="avatar"
+                style="transition: opacity 0.5s; opacity:0;" onload="this.style.opacity=1;" />
+            {{/if}}
+          </a>
+        {{/each}}
+      </div>
+    </div>
+  </div>
   <div class="card">
     <div class="card-header">
       <strong>{{userProfileData.commentedRestaurants.length}}</strong> 已評論餐廳
@@ -40,6 +92,20 @@
             onload="this.style.opacity=1;" />
         </a>
       {{/each}}
+    </div>
+    <br />
+    <div class="card">
+      <div class="card-header">
+        <strong>{{userProfileData.FavoritedRestaurants.length}}</strong> 收藏的餐廳
+      </div>
+      <div class="card-body">
+        {{#each userProfileData.FavoritedRestaurants}}
+          <a href="/restaurants/{{this.id}}" class="text-decoration-none">
+            <img src="{{this.image}}" width="60" height="60" class="avatar" style="transition: opacity 0.5s; opacity:0;"
+              onload="this.style.opacity=1;" />
+          </a>
+        {{/each}}
+      </div>
     </div>
   </div>
 </div>

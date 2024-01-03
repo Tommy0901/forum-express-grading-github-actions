@@ -61,6 +61,11 @@
               </div>
             </h4>
             <p class="my-4" style="white-space: break-spaces;">{{this.text}}</p>
+            {{#if ../user.isAdmin}} <!--直接取 req.user.isAdmin 來判斷-->
+              <form action="/comments/{{this.id}}?_method=DELETE" method="POST" class="float-end">
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            {{/if}}
             - <a class="link-secondary" href="/users/{{this.User.id}}">{{this.User.name}}</a>
             <small>at {{relativeTimeFromNow this.createdAt}}</small>
             <hr>

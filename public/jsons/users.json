@@ -3,18 +3,21 @@
     "name": "root",
     "email": "root@example.com",
     "password": "12345678",
-    "is_admin": true
+    "is_admin": true,
+    "image": "/images/avatars/admin.png"
   },
   {
     "name": "user1",
     "email": "user1@example.com",
     "password": "12345678",
-    "is_admin": false
+    "is_admin": false,
+    "image": "/images/avatars/user1.png"
   },
   {
     "name": "user2",
     "email": "user2@example.com",
     "password": "12345678",
-    "is_admin": false
+    "is_admin": false,
+    "image": "/images/avatars/user2.png"
   }
 ]
