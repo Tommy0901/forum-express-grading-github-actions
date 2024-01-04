@@ -10,8 +10,8 @@ module.exports = {
       restaurant_id INT NOT NULL,
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
-      CONSTRAINT fk_restaurant_id FOREIGN KEY (restaurant_id) REFERENCES Restaurants(id) ON DELETE CASCADE
+      CONSTRAINT comments_fk_user_id FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
+      CONSTRAINT comments_fk_restaurant_id FOREIGN KEY (restaurant_id) REFERENCES Restaurants(id) ON DELETE CASCADE
     )`)
 
     // await queryInterface.createTable('Comments', {

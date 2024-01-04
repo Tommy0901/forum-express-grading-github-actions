@@ -6,7 +6,7 @@ module.exports = {
     await queryInterface.sequelize.query(`
     ALTER TABLE Restaurants
     ADD COLUMN category_id INT NOT NULL AFTER image,
-    ADD CONSTRAINT fk_category_id FOREIGN KEY (category_id) REFERENCES Categories(id) ON UPDATE CASCADE`
+    ADD CONSTRAINT restaurants_fk_category_id FOREIGN KEY (category_id) REFERENCES Categories(id) ON UPDATE CASCADE`
     )
 
     // await queryInterface.addColumn(
