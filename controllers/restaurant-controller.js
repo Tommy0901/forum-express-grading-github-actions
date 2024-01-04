@@ -16,6 +16,7 @@ const restaurantController = {
           Restaurant.findAndCountAll({
             raw: true,
             nest: true,
+            order: [['id', 'DESC']],
             include: { model: Category, ...name ? { where: { name } } : {} },
             limit,
             offset
