@@ -8,7 +8,6 @@ const routes = require('./routes')
 const { sessionHandler } = require('./middlewares/session-handler')
 const { messageHandler } = require('./middlewares/message-handler')
 const { urlencodedHandler, staticHandler } = require('./middlewares/express-handler')
-const { generalErrorHandler } = require('./middlewares/error-handler')
 const { methodOverrideHandler } = require('./middlewares/methodOverride-handler')
 
 const app = express()
@@ -27,8 +26,7 @@ app.use(
   flash(),
   messageHandler,
   staticHandler('public'),
-  routes,
-  generalErrorHandler
+  routes
 )
 
 app.listen(port, () => {
