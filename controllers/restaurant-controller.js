@@ -1,6 +1,5 @@
-const { User, Restaurant, Category, Comment, Favorite } = require('../models')
+const { User, Restaurant, Category, Comment } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helper')
-const { Op } = require('sequelize')
 const sequelize = require('sequelize')
 
 const DEFAULT_LIMIT = 9
@@ -106,34 +105,18 @@ const restaurantController = {
   getTopRestaurants: (req, res, next) => {
     (async () => {
       try {
-        const favorites = await Favorite.findAll({
-          attributes: ['restaurantId', [sequelize.fn('COUNT', 'id'), 'count']],
-          group: ['restaurantId'],
-          order: [['count', 'DESC']],
-          limit: 10,
-          raw: true
+        const restaurantsArr = await Restaurant.findAll({
+          attributes: ['id', 'name', 'image', 'description', [sequelize.literal('(SELECT COUNT(`id`) FROM favorites WHERE favorites.restaurant_id = Restaurant.id)'), 'favoritesCount']],
+          order: [['favoritesCount', 'DESC'], ['id', 'ASC']],
+          limit: 10
         })
-        const favoritesIdArr = favorites.map(f => f.restaurantId)
-        const [Arr1, Arr2] = await Promise.all([
-          Restaurant.findAll({
-            include: { model: User, as: 'FavoritedUsers' },
-            where: { id: { [Op.in]: favoritesIdArr } }
-          }),
-          Restaurant.findAll({
-            include: { model: User, as: 'FavoritedUsers' },
-            where: { id: { [Op.notIn]: favoritesIdArr } },
-            limit: 10 - favorites.length
-          })
-        ])
-        const restaurantsArr = favorites.length ? [...Arr1, ...Arr2] : Arr2
         const restaurants = restaurantsArr
           .map(r => ({
             ...r.toJSON(),
             description: r.description.substring(0, 50),
-            favoritesCount: r.FavoritedUsers.length,
-            isFavorited: req.user.FavoritedRestaurants?.map(fr => fr.id).includes(r.id)
+            isFavorited: req.user.FavoritedRestaurants?.some(fr => fr.id === r.id)
+            // isFavorited: req.user.FavoritedRestaurants?.map(fr => fr.id).includes(r.id)
           }))
-          .sort((a, b) => b.favoritesCount - a.favoritesCount)
         res.render('top-restaurants', { restaurants })
       } catch (error) {
         next(error)
