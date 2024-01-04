@@ -29,7 +29,7 @@ module.exports = {
   async down (queryInterface, Sequelize) {
     await queryInterface.sequelize.query(`
     ALTER TABLE Restaurants
-    DROP FOREIGN KEY fk_category_id,
+    DROP FOREIGN KEY restaurants_fk_category_id,
     DROP COLUMN category_id`
     )
 

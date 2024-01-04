@@ -6,12 +6,12 @@ module.exports = {
     CREATE TABLE IF NOT EXISTS Comments (
       id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
       text TEXT NOT NULL,
-      user_id INT NOT NULL,
-      restaurant_id INT NOT NULL,
+      user_id INT,
+      restaurant_id INT,
       created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-      CONSTRAINT comments_fk_user_id FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
-      CONSTRAINT comments_fk_restaurant_id FOREIGN KEY (restaurant_id) REFERENCES Restaurants(id) ON DELETE CASCADE
+      CONSTRAINT comments_fk_user_id FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE SET NULL,
+      CONSTRAINT comments_fk_restaurant_id FOREIGN KEY (restaurant_id) REFERENCES Restaurants(id) ON DELETE SET NULL
     )`)
 
     // await queryInterface.createTable('Comments', {
@@ -31,7 +31,7 @@ module.exports = {
     //       model: 'Users', // table name
     //       key: 'id' // column name
     //     },
-    //     onDelete: 'RESTRICT',
+    //     onDelete: 'SET NULL',
     //     onUpdate: 'CASCADE',
     //     type: Sequelize.INTEGER
     //   },
@@ -41,7 +41,7 @@ module.exports = {
     //       model: 'Restaurants', // table name
     //       key: 'id' // column name
     //     },
-    //     onDelete: 'RESTRICT',
+    //     onDelete: 'SET NULL',
     //     onUpdate: 'CASCADE',
     //     type: Sequelize.INTEGER
     //   },
