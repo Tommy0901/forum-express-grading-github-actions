@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs')
+const sequelize = require('sequelize')
 
 const { User, Restaurant, Comment, Favorite, Like, Followship } = require('../models')
 
@@ -173,15 +174,18 @@ const userController = {
   getTopUsers: (req, res, next) => {
     (async () => {
       try {
-        const userDataArr = await User.findAll({ include: { model: User, as: 'Followers' } })
-        const users = userDataArr
-          .map(user => ({
-            ...user.toJSON(),
-            followerCount: user.Followers.length,
+        const users = await User.findAll({
+          limit: 24,
+          attributes: ['id', 'name', 'image', [sequelize.literal('(SELECT COUNT(`id`) FROM followships WHERE followships.following_id = User.id)'), 'followerCount']],
+          order: [['followerCount', 'DESC']],
+          raw: true
+        })
+        res.render('top-users', {
+          users: users.map(user => ({
+            ...user,
             isFollowed: req.user.Followings?.some(f => f.id === user.id)
           }))
-          .sort((a, b) => b.followerCount - a.followerCount)
-        res.render('top-users', { users })
+        })
       } catch (error) {
         next(error)
       }
