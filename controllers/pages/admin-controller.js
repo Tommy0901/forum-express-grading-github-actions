@@ -76,18 +76,11 @@ const adminController = {
     })()
   },
   deleteRestaurant: (req, res, next) => {
-    const { id } = req.params;
-    (async () => {
-      try {
-        const restaurant = await Restaurant.findByPk(id) // 接著操作 Sequelize 語法，不加 { raw: true }
-        if (!restaurant) throw new Error("Restaurant didn't exist!")
-        await restaurant.destroy()
-        req.flash('success', 'restaurant was successfully deleted!')
-        res.redirect('/admin/restaurants')
-      } catch (error) {
-        next(error)
-      }
-    })()
+    adminServices.deleteRestaurant(req, (err, data) => {
+      if (err) return next(err)
+      req.session.deletedData = data
+      res.redirect('/admin/restaurants')
+    })
   },
   getUsers: (req, res, next) => {
     (async () => {
