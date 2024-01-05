@@ -1,3 +1,4 @@
+const adminServices = require('../../services/admin-services')
 const { Restaurant, User, Category } = require('../../models')
 const { localFileHandler } = require('../../helpers/file-helpers')
 
@@ -27,18 +28,7 @@ const adminController = {
     })()
   },
   getRestaurants: (req, res, next) => {
-    (async () => {
-      try {
-        const restaurants = await Restaurant.findAll({
-          raw: true,
-          nest: true,
-          include: [Category]
-        })
-        res.render('admin/restaurants', { restaurants })
-      } catch (error) {
-        next(error)
-      }
-    })()
+    adminServices.getRestaurants(req, (err, data) => err ? next(err) : res.render('admin/restaurants', data))
   },
   getRestaurant: (req, res, next) => {
     const { id } = req.params;
