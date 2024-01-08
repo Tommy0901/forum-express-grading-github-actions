@@ -1,6 +1,6 @@
 const adminServices = require('../../services/admin-services')
 const { Restaurant, User, Category } = require('../../models')
-const { localFileHandler } = require('../../helpers/file-helpers')
+const { imgurFileHandler } = require('../../helpers/file-helpers')
 
 const adminController = {
   createRestaurant: (req, res, next) => {
@@ -14,18 +14,12 @@ const adminController = {
     })()
   },
   postRestaurant: (req, res, next) => {
-    const { file } = req
-    const { name, tel, address, openingHours, description, categoryId } = req.body
-    if (!name || !tel || !address) throw new Error('Restaurant needs name, tel and address.');
-    (async () => {
-      try {
-        await Restaurant.create({ name, tel, address, openingHours, description, image: await localFileHandler(file), categoryId })
-        req.flash('success', 'restaurant was successfully created!')
-        res.redirect('/admin/restaurants')
-      } catch (error) {
-        next(error)
-      }
-    })()
+    adminServices.postRestaurant(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success', 'restaurant was successfully created!')
+      req.session.deletedData = data
+      res.redirect('/admin/restaurants')
+    })
   },
   getRestaurants: (req, res, next) => {
     adminServices.getRestaurants(req, (err, data) => err ? next(err) : res.render('admin/restaurants', data))
@@ -65,7 +59,7 @@ const adminController = {
     if (!name || !tel || !address) throw new Error('Restaurant needs name, tel and address.');
     (async () => {
       try {
-        const [filePath, restaurant] = await Promise.all([localFileHandler(file), Restaurant.findByPk(id)])
+        const [filePath, restaurant] = await Promise.all([imgurFileHandler(file), Restaurant.findByPk(id)])
         if (!restaurant) throw new Error("Restaurant didn't exist!")
         await restaurant.update({ name, tel, address, openingHours, description, image: filePath || restaurant.image, categoryId })
         req.flash('success', 'restaurant was successfully updated!')
@@ -78,6 +72,7 @@ const adminController = {
   deleteRestaurant: (req, res, next) => {
     adminServices.deleteRestaurant(req, (err, data) => {
       if (err) return next(err)
+      req.flash('success', 'restaurant was successfully deleted!')
       req.session.deletedData = data
       res.redirect('/admin/restaurants')
     })

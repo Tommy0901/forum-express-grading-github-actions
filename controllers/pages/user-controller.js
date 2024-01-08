@@ -3,7 +3,7 @@ const sequelize = require('sequelize')
 
 const { User, Restaurant, Comment, Favorite, Like, Followship } = require('../../models')
 
-const { localFileHandler } = require('../../helpers/file-helpers')
+const { imgurFileHandler } = require('../../helpers/file-helpers')
 
 const userController = {
   signUpPage: (req, res) => {
@@ -95,7 +95,7 @@ const userController = {
     if (!name) throw new Error('Please enter user name.');
     (async () => {
       try {
-        const [filePath, user] = await Promise.all([localFileHandler(file), User.findByPk(id)])
+        const [filePath, user] = await Promise.all([imgurFileHandler(file), User.findByPk(id)])
         if (!user) throw new Error("The user didn't exist!")
         await user.update({ name, image: filePath || user.image })
         req.flash('success', 'user profile was successfully updated!')

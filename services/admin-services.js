@@ -1,6 +1,23 @@
 const { Restaurant, Category } = require('../models')
+const { imgurFileHandler } = require('../helpers/file-helpers')
 
 const adminServices = {
+  postRestaurant: (req, cb) => {
+    const { file } = req
+    const { name, tel, address, openingHours, description, categoryId } = req.body
+    if (!name || !tel || !address) throw new Error('Restaurant needs name, tel and address.');
+    (async () => {
+      try {
+        cb(null, {
+          restaurant: await Restaurant.create(
+            { name, tel, address, openingHours, description, image: await imgurFileHandler(file), categoryId }
+          )
+        })
+      } catch (error) {
+        cb(error)
+      }
+    })()
+  },
   getRestaurants: (req, cb) => {
     (async () => {
       try {
@@ -25,9 +42,7 @@ const adminServices = {
           err.status = 404
           throw err
         }
-        const deletedRestaurant = await restaurant.destroy()
-        req.flash('success', 'restaurant was successfully deleted!')
-        cb(null, { deletedRestaurant })
+        cb(null, { restaurant: await restaurant.destroy() })
       } catch (err) {
         cb(err)
       }
