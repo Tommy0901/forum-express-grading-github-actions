@@ -1,23 +1,14 @@
 const adminServices = require('../../services/admin-services')
-const { Restaurant, User, Category } = require('../../models')
-const { imgurFileHandler } = require('../../helpers/file-helpers')
 
 const adminController = {
   createRestaurant: (req, res, next) => {
-    (async () => {
-      try {
-        const categories = await Category.findAll({ raw: true })
-        res.render('admin/create-restaurant', { categories })
-      } catch (error) {
-        next(error)
-      }
-    })()
+    adminServices.createRestaurant(req, (err, data) => err ? next(err) : res.render('admin/create-restaurant', data))
   },
   postRestaurant: (req, res, next) => {
     adminServices.postRestaurant(req, (err, data) => {
       if (err) return next(err)
       req.flash('success', 'restaurant was successfully created!')
-      req.session.deletedData = data
+      req.session.createdData = data
       res.redirect('/admin/restaurants')
     })
   },
@@ -25,49 +16,18 @@ const adminController = {
     adminServices.getRestaurants(req, (err, data) => err ? next(err) : res.render('admin/restaurants', data))
   },
   getRestaurant: (req, res, next) => {
-    const { id } = req.params;
-    (async () => {
-      try {
-        const restaurant = await Restaurant.findByPk(id, {
-          raw: true,
-          nest: true,
-          include: [Category]
-        })
-        if (!restaurant) throw new Error("Restaurant didn't exist!")
-        res.render('admin/restaurant', { restaurant })
-      } catch (error) {
-        next(error)
-      }
-    })()
+    adminServices.getRestaurant(req, (err, data) => err ? next(err) : res.render('admin/restaurant', data))
   },
   editRestaurant: (req, res, next) => {
-    const { id } = req.params;
-    (async () => {
-      try {
-        const [restaurant, categories] = await Promise.all([Restaurant.findByPk(id, { raw: true }), Category.findAll({ raw: true })])
-        if (!restaurant) throw new Error("Restaurant didn't exist!")
-        res.render('admin/edit-restaurant', { restaurant, categories })
-      } catch (error) {
-        next(error)
-      }
-    })()
+    adminServices.editRestaurant(req, (err, data) => err ? next(err) : res.render('admin/edit-restaurant', data))
   },
   putRestaurant: (req, res, next) => {
-    const { file } = req
-    const { id } = req.params
-    const { name, tel, address, openingHours, description, categoryId } = req.body
-    if (!name || !tel || !address) throw new Error('Restaurant needs name, tel and address.');
-    (async () => {
-      try {
-        const [filePath, restaurant] = await Promise.all([imgurFileHandler(file), Restaurant.findByPk(id)])
-        if (!restaurant) throw new Error("Restaurant didn't exist!")
-        await restaurant.update({ name, tel, address, openingHours, description, image: filePath || restaurant.image, categoryId })
-        req.flash('success', 'restaurant was successfully updated!')
-        res.redirect('/admin/restaurants')
-      } catch (error) {
-        next(error)
-      }
-    })()
+    adminServices.putRestaurant(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success', 'restaurant was successfully updated!')
+      req.session.updatedData = data
+      res.redirect('/admin/restaurants')
+    })
   },
   deleteRestaurant: (req, res, next) => {
     adminServices.deleteRestaurant(req, (err, data) => {
@@ -78,29 +38,15 @@ const adminController = {
     })
   },
   getUsers: (req, res, next) => {
-    (async () => {
-      try {
-        const users = await User.findAll({ raw: true })
-        res.render('admin/users', { users })
-      } catch (error) {
-        next(error)
-      }
-    })()
+    adminServices.getUsers(req, (err, data) => err ? next(err) : res.render('admin/users', data))
   },
   patchUser: (req, res, next) => {
-    const { id } = req.params
-    const { isAdmin } = req.body;
-    (async () => {
-      try {
-        const user = await User.findByPk(id) // 接著操作 Sequelize 語法，不加 { raw: true }
-        if (!user) throw new Error("user didn't exist!")
-        await user.update({ isAdmin })
-        req.flash('success', "user's role was successfully updated!")
-        res.redirect('/admin/users')
-      } catch (error) {
-        next(error)
-      }
-    })()
+    adminServices.patchUser(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success', "user's role was successfully updated!")
+      req.session.updatedData = data
+      res.redirect(data.user.dataValues.id === req.user.id ? '/restaurants' : '/admin/users')
+    })
   },
   registerUser: (req, res) => {
     res.render('admin/enroll-user')

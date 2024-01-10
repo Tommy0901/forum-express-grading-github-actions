@@ -1,67 +1,32 @@
-const { Restaurant, Category } = require('../../models')
+const categoryServices = require('../../services/category-services')
 
 const categoryController = {
   getCategories: (req, res, next) => {
-    const id = req.params?.id;
-    (async () => {
-      try {
-        const [categories, category] = await Promise.all([
-          Category.findAll({ raw: true }),
-          id
-            ? Category.findByPk(id, { raw: true })
-            : null
-        ])
-        res.render('admin/categories', { categories, category })
-      } catch (error) {
-        next(error)
-      }
-    })()
+    categoryServices.getCategories(req, (err, data) => err ? next(err) : res.render('admin/categories', data))
   },
   postCategory: (req, res, next) => {
-    const { name } = req.body
-    if (!name) throw new Error('Category name is required!');
-    (async () => {
-      try {
-        const category = await Category.findOne({ where: { name } })
-        if (category) throw new Error('Category name has been used!')
-        await Category.create({ name })
-        req.flash('success', 'category was successfully added.')
-        res.redirect('/admin/categories')
-      } catch (error) {
-        next(error)
-      }
-    })()
+    categoryServices.postCategory(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success', 'category was successfully added.')
+      req.session.createdData = data
+      res.redirect('/admin/categories')
+    })
   },
   putCategory: (req, res, next) => {
-    const { id } = req.params
-    const { name } = req.body
-    if (!name) throw new Error('Category needs name to add.');
-    (async () => {
-      try {
-        const category = await Category.findByPk(id) // 接著操作 Sequelize 語法，不加 { raw: true }
-        if (!category) throw new Error("Category didn't exist!")
-        await category.update({ name })
-        req.flash('success', 'category was successfully updated!')
-        res.redirect('/admin/categories')
-      } catch (error) {
-        next(error)
-      }
-    })()
+    categoryServices.putCategory(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success', 'category was successfully updated!')
+      req.session.updatedData = data
+      res.redirect('/admin/categories')
+    })
   },
   deleteCategory: (req, res, next) => {
-    const { id } = req.params;
-    (async () => {
-      try {
-        const category = await Category.findByPk(id) // 接著操作 Sequelize 語法，不加 { raw: true }
-        if (!category) throw new Error("Category didn't exist!")
-        if (await Restaurant.findOne({ where: { categoryId: id } })) throw new Error("Category has been used, can't be deletd")
-        await category.destroy()
-        req.flash('success', 'category was successfully deleted!')
-        res.redirect('/admin/categories')
-      } catch (error) {
-        next(error)
-      }
-    })()
+    categoryServices.deleteCategory(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success', 'category was successfully deleted!')
+      req.session.deletedData = data
+      res.redirect('/admin/categories')
+    })
   }
 }
 module.exports = categoryController

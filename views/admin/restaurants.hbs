@@ -1,5 +1,5 @@
 {{> admin-tabs route='restaurants'}}
-<a href='/admin/restaurants/create'>
+<a href='/admin/restaurant/create'>
   <button type="button" class="btn btn-primary">New Restaurant</button>
 </a>
 <br />
@@ -21,16 +21,16 @@
         <td>{{this.Category.name}}</td>
         <td>
           <button type="button" class="btn btn-link">
-            <a class="btn btn-link link-primary" href="/admin/restaurants/{{this.id}}">
+            <a class="btn btn-link link-primary" href="/admin/restaurant/{{this.id}}">
               Show
             </a>
           </button>
           <button type="button" class="btn btn-link">
-            <a class="btn btn-link link-primary" href="/admin/restaurants/{{this.id}}/edit">
+            <a class="btn btn-link link-primary" href="/admin/restaurant/{{this.id}}/edit">
               Edit
             </a>
           </button>
-          <form action="/admin/restaurants/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
+          <form action="/admin/restaurant/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
             <button type="submit" class="btn btn-link link-danger" onclick="return confirm(`確定要刪除 {{ this.name }} 嗎？`)">Delete</button>
           </form>
         </td>
