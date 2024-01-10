@@ -8,6 +8,7 @@ const commentController = require('../../controllers/apis/comment-controller')
 const userController = require('../../controllers/apis/user-controller')
 
 const { apiErrorHandler } = require('../../middlewares/error-handler')
+const { passportAuth } = require('../../middlewares/auth-handler')
 const { upload } = require('../../middlewares/multer')
 
 router.use('/admin', admin)
@@ -16,7 +17,7 @@ router.get('/signup', userController.signUpPage)
 router.post('/signup', userController.signUp)
 
 router.get('/signin', userController.signInPage)
-router.post('/signin', userController.signIn)
+router.post('/signin', passportAuth('local', { session: false }), userController.signIn)
 
 router.get('/logout', userController.logout)
 

@@ -19,7 +19,7 @@ const userController = {
     userServices.signIn(req, (err, data) => {
       if (err) return next(err)
       req.flash('success', '登入成功!')
-      res.redirect(data.isAdmin ? '/admin/restaurants' : '/restaurants')
+      res.redirect(data.user.isAdmin ? '/admin/restaurants' : '/restaurants')
     })
   },
   logout: (req, res) => {

@@ -26,8 +26,8 @@ const userServices = {
     const { id } = req.user;
     (async () => {
       try {
-        const user = await User.findByPk(id, { raw: true })
-        delete user.password
+        const userData = await User.findByPk(id, { raw: true })
+        const { password, ...user } = userData
         cb(null, { user })
       } catch (err) {
         cb(err)
@@ -65,8 +65,8 @@ const userServices = {
     if (+id !== req.user?.id) throw new Error('Permission denied!');
     (async () => {
       try {
-        const user = await User.findByPk(id, { raw: true })
-        delete user.password
+        const userData = await User.findByPk(id, { raw: true })
+        const { password, ...user } = userData
         cb(null, { user })
       } catch (err) {
         cb(err)
