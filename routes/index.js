@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const { authenticated, authenticatedAdmin } = require('../middlewares/auth-handler')
-const { generalErrorHandler } = require('../middlewares/error-handler')
+const { apiErrorHandler, generalErrorHandler } = require('../middlewares/error-handler')
 
 const apis = require('./apis')
 const root = require('./pages/root')
@@ -18,7 +18,7 @@ const following = require('./pages/following')
 const restaurant = require('./pages/restaurant')
 const restaurants = require('./pages/restaurants')
 
-router.use('/api', apis)
+router.use('/api', apis, apiErrorHandler)
 router.use('/signup', signUp)
 router.use('/signin', signIn)
 router.use('/logout', logOut)

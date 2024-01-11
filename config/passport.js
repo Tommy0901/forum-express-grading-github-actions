@@ -3,6 +3,14 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local')
 
 const { User, Restaurant } = require('../models')
+const { ExtractJwt, Strategy: JwtStrategy } = require('passport-jwt')
+
+if (process.env.NODE_ENV !== 'production') require('dotenv').config()
+
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET
+}
 
 passport.use(
   new LocalStrategy(
@@ -23,13 +31,32 @@ passport.use(
                   message: 'email 或密碼錯誤'
                 })
             : done(null, false, { message: 'email 或密碼錯誤' })
-        } catch (error) {
-          done(error)
+        } catch (err) {
+          done(err)
         }
       })()
     }
   )
 )
+
+passport.use(new JwtStrategy(jwtOptions, (jwtPayload, done) => {
+  const { id } = jwtPayload;
+  (async () => {
+    try {
+      const user = await User.findByPk(id, {
+        include: [
+          { model: Restaurant, as: 'FavoritedRestaurants' },
+          { model: Restaurant, as: 'LikedRestaurants' },
+          { model: User, as: 'Followings' },
+          { model: User, as: 'Followers' }
+        ]
+      })
+      done(null, user) // 後續 jwt 會協助將資料 user 轉成 JSON 格式
+    } catch (err) {
+      done(err)
+    }
+  })()
+}))
 
 passport.serializeUser((user, done) => {
   const { id } = user
@@ -48,8 +75,8 @@ passport.deserializeUser((id, done) => {
         ]
       })
       done(null, user.toJSON())
-    } catch (error) {
-      done(error)
+    } catch (err) {
+      done(err)
     }
   })()
 })

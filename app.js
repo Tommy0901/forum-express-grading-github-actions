@@ -13,10 +13,6 @@ const { methodOverrideHandler } = require('./middlewares/methodOverride-handler'
 const app = express()
 const port = process.env.PORT || 3000
 
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
-
 app.engine('.hbs', handlebars({ extname: '.hbs', helpers })) // 註冊 Handlebars 樣板引擎，並指定副檔名為 .hbs 及載入 helpers
 app.set('view engine', '.hbs') // 設定使用 Handlebars 做為樣板引擎
 app.set('views', './views') // 參考之前作法加入此行程式碼
