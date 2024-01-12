@@ -2,14 +2,8 @@ const userServices = require('../../services/user-services')
 const jwt = require('jsonwebtoken')
 
 const userController = {
-  signUpPage: (req, res) => {
-    res.json({ status: 'success', message: 'render signup page' })
-  },
   signUp: (req, res, next) => {
     userServices.signUp(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))
-  },
-  signInPage: (req, res) => {
-    res.json({ status: 'success', message: 'render signin page' })
   },
   signIn: (req, res, next) => {
     const { user } = req
@@ -24,9 +18,6 @@ const userController = {
     } catch (err) {
       next(err)
     }
-  },
-  logout: (req, res) => {
-    res.json({ status: 'success', message: '使用者請求登出!' })
   },
   getUser: (req, res, next) => {
     userServices.getUser(req, (err, data) => err ? next(err) : res.json({ status: 'success', data }))

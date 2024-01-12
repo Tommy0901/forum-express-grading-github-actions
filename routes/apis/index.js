@@ -1,5 +1,5 @@
 const express = require('express')
-const router = express.Router()
+const [router, users, restaurant, restaurants, comments, favorites, likes, following] = Array.from({ length: 8 }, () => express.Router())
 
 const admin = require('./modules/admin')
 
@@ -10,39 +10,50 @@ const userController = require('../../controllers/apis/user-controller')
 const { api: { authenticated, authenticatedAdmin }, passportAuth } = require('../../middlewares/auth-handler')
 const { upload } = require('../../middlewares/multer')
 
-router.get('/signup', userController.signUpPage)
 router.post('/signup', userController.signUp)
 
-router.get('/signin', userController.signInPage)
 router.post('/signin', passportAuth('local', { session: false }), userController.signIn)
-
-router.get('/logout', userController.logout)
 
 router.use(authenticated)
 
 router.use('/admin', authenticatedAdmin, admin)
 
-router.get('/users/top', userController.getTopUsers)
-router.get('/users/:id/edit', userController.editUser)
-router.get('/users/:id', userController.getUser)
-router.put('/users/:id', upload.single('image'), userController.putUser)
+router.use('/users',
+  users.get('/top', userController.getTopUsers),
+  users.get('/:id/edit', userController.editUser),
+  users.get('/:id', userController.getUser),
+  users.put('/:id', upload.single('image'), userController.putUser)
+)
 
-router.get('/restaurant/:id/dashboard', restController.getDashboard)
-router.get('/restaurant/:id', restController.getRestaurant)
-router.get('/restaurants/top', restController.getTopRestaurants)
-router.get('/restaurants/feeds', restController.getFeeds)
-router.get('/restaurants', restController.getRestaurants)
+router.use('/restaurant',
+  restaurant.get('/:id/dashboard', restController.getDashboard),
+  restaurant.get('/:id', restController.getRestaurant)
+)
 
-router.post('/comments/:userId', commentController.putCategory)
-router.delete('/comments/:id', commentController.deleteCategory)
+router.use('/restaurants',
+  restaurants.get('/top', restController.getTopRestaurants),
+  restaurants.get('/feeds', restController.getFeeds),
+  restaurants.get('/', restController.getRestaurants)
+)
 
-router.post('/favorites/:restaurantId', userController.addFavorite)
-router.delete('/favorites/:restaurantId', userController.removeFavorite)
+router.use('/comments',
+  comments.post('/:userId', commentController.postComment),
+  comments.delete('/:id', commentController.deleteComment)
+)
 
-router.post('/likes/:restaurantId', userController.addLike)
-router.delete('/likes/:restaurantId', userController.removeLike)
+router.use('/favorites',
+  favorites.post('/:restaurantId', userController.addFavorite),
+  favorites.delete('/:restaurantId', userController.removeFavorite)
+)
 
-router.post('/following/:followingId', userController.addFollowing)
-router.delete('/following/:followingId', userController.removeFollowing)
+router.use('/likes',
+  likes.post('/:restaurantId', userController.addLike),
+  likes.delete('/:restaurantId', userController.removeLike)
+)
+
+router.use('/following',
+  following.post('/:followingId', userController.addFollowing),
+  following.delete('/:followingId', userController.removeFollowing)
+)
 
 module.exports = router
