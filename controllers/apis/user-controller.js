@@ -12,7 +12,7 @@ const userController = {
     res.json({ status: 'success', message: 'render signin page' })
   },
   signIn: (req, res, next) => {
-    const { password, ...user } = req.user
+    const { user } = req
     try {
       res.json({
         status: 'success',

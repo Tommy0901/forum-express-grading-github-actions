@@ -14,8 +14,8 @@ const userServices = {
     (async () => {
       try {
         if (await User.findOne({ where: { email } })) throw new Error('Email already exists!')
-        const user = await User.create({ name, email, password: await bcrypt.hash(password, 10) })
-        delete user.dataValues.password
+        const createdUser = await User.create({ name, email, password: await bcrypt.hash(password, 10) })
+        const { password: removedPassword, ...user } = createdUser.toJSON()
         cb(null, { user }, isAdmin)
       } catch (err) {
         cb(err)
@@ -46,15 +46,16 @@ const userServices = {
             { model: User, as: 'Followers' }
           ]
         })
-        delete user.dataValues.password
-        user.dataValues.commentedRestaurants = user.toJSON().Comments
+        const { password, ...userData } = user.toJSON()
+        const { ...userProfileData } = userData
+        userProfileData.commentedRestaurants = userData.Comments
           ?.map(c => c.Restaurant)
           .filter(item => item !== null)
           .filter((item, index, self) => self.findIndex(obj => obj.id === item.id) === index)
-        // user.dataValues.commentedRestaurants = user.toJSON().Comments
+        // userProfileData.commentedRestaurants = userData.Comments
         //   ?.reduce((acc, c) => { if (!acc.some(r => r.id === c.restaurantId)) acc.push(c.Restaurant); return acc }, [])
-        user.dataValues.isFollowed = user.toJSON().Followers?.some(f => f.id === req.user.id)
-        cb(null, { userProfileData: user.toJSON() })
+        userProfileData.isFollowed = userData.Followers?.some(f => f.id === req.user.id)
+        cb(null, { userProfileData })
       } catch (err) {
         cb(err)
       }
@@ -83,8 +84,8 @@ const userServices = {
       try {
         const [filePath, userData] = await Promise.all([imgurFileHandler(file), User.findByPk(id)])
         if (!userData) throw new Error("This user didn't exist!")
-        const user = await userData.update({ name, image: filePath || userData.image })
-        delete user.dataValues.password
+        const updatedUser = await userData.update({ name, image: filePath || userData.image })
+        const { password, ...user } = updatedUser.toJSON()
         cb(null, { user })
       } catch (err) {
         cb(err)

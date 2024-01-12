@@ -124,8 +124,8 @@ const adminServices = {
         const userData = await User.findByPk(id) // 接著操作 Sequelize 語法，不加 { raw: true }
         if (!userData) throw new Error("user didn't exist!")
         if (userData.email === 'root@example.com') throw new Error('禁止變更 root 權限')
-        const user = await userData.update({ isAdmin })
-        delete user.dataValues.password
+        const updatedData = await userData.update({ isAdmin })
+        const { password, ...user } = updatedData.toJSON()
         cb(null, { user })
       } catch (error) {
         cb(error)

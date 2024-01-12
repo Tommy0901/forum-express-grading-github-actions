@@ -45,7 +45,7 @@ const adminController = {
       if (err) return next(err)
       req.flash('success', "user's role was successfully updated!")
       req.session.updatedData = data
-      res.redirect(data.user.dataValues.id === req.user.id ? '/restaurants' : '/admin/users')
+      res.redirect(data.user.id === req.user.id ? '/restaurants' : '/admin/users')
     })
   },
   registerUser: (req, res) => {
