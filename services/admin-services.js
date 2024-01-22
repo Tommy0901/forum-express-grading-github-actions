@@ -80,7 +80,6 @@ const adminServices = {
       try {
         const [filePath, restaurant] = await Promise.all([imgurFileHandler(file), Restaurant.findByPk(id)])
         if (!restaurant) throw new Error("Restaurant didn't exist!")
-        req.flash('success', 'restaurant was successfully updated!')
         cb(null, {
           restaurant: await restaurant.update(
             { name, tel, address, openingHours, description, ...image ? { image } : { image: filePath || restaurant.image }, categoryId }
