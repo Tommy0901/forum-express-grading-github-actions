@@ -1,11 +1,11 @@
 {{> restaurant-tabs route='index'}}
 <ul class="nav nav-pills">
   <li class="nav-item">
-    <a class="nav-link {{#if name}}{{else}}active{{/if}}" href="?page=1">全部</a>
+    <a class="nav-link {{#if name}}{{else if categoryId}}{{else}}active{{/if}}" href="?page=1">全部</a>
   </li>
   {{#each categories}}
     <li class="nav-item">
-      <a class="nav-link {{#ifCond this.name ../name}}active{{/ifCond}}" href="?page=1&name={{this.name}}">
+      <a class="nav-link {{#ifCond this.name ../name}}active{{/ifCond}}{{#ifCond this.id ../categoryId}}active{{/ifCond}}" href="?page=1&name={{this.name}}">
         {{this.name}}
       </a> 
     </li>

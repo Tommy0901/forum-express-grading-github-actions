@@ -7,8 +7,7 @@ const routes = require('./routes')
 
 const { sessionHandler } = require('./middlewares/session-handler')
 const { messageHandler } = require('./middlewares/message-handler')
-const { urlencodedHandler, staticHandler } = require('./middlewares/express-handler')
-const { generalErrorHandler } = require('./middlewares/error-handler')
+const { urlencodedHandler, jsonHandler, staticHandler } = require('./middlewares/express-handler')
 const { methodOverrideHandler } = require('./middlewares/methodOverride-handler')
 
 const app = express()
@@ -20,6 +19,7 @@ app.set('views', './views') // 參考之前作法加入此行程式碼
 
 app.use(
   urlencodedHandler,
+  jsonHandler,
   methodOverrideHandler,
   sessionHandler,
   passport.initialize(),
@@ -27,8 +27,7 @@ app.use(
   flash(),
   messageHandler,
   staticHandler('public'),
-  routes,
-  generalErrorHandler
+  routes
 )
 
 app.listen(port, () => {

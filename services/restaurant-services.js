@@ -2,11 +2,10 @@ const { User, Restaurant, Category, Comment } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helper')
 const sequelize = require('sequelize')
 
-const DEFAULT_LIMIT = 9
-
-const restaurantController = {
-  getRestaurants: (req, res, next) => {
-    const { name } = req.query
+const restaurantServices = {
+  getRestaurants: (req, cb) => {
+    const DEFAULT_LIMIT = 9
+    const { name, categoryId } = req.query
     const page = +req.query.page || 1
     const limit = +req.query.limit || DEFAULT_LIMIT
     const offset = getOffset(limit, page);
@@ -18,26 +17,33 @@ const restaurantController = {
             nest: true,
             order: [['id', 'DESC']],
             include: { model: Category, ...name ? { where: { name } } : {} },
+            ...categoryId ? { where: { categoryId } } : {},
             limit,
             offset
           }),
           Category.findAll({ raw: true })
         ])
-        const favoritedRestaurantsId = req.user.FavoritedRestaurants?.map(fr => fr.id)
-        const likedRestaurantsId = req.user.LikedRestaurants?.map(lr => lr.id)
+        const favoritedRestaurantsId = req.user?.FavoritedRestaurants?.map(fr => fr.id)
+        const likedRestaurantsId = req.user?.LikedRestaurants?.map(lr => lr.id)
         const restaurants = restObject.rows.map(r => ({
           ...r,
-          description: r.description.substring(0, 50),
-          isFavorited: favoritedRestaurantsId.includes(r.id),
-          isLiked: likedRestaurantsId.includes(r.id)
+          description: r.description?.substring(0, 50) || '',
+          isFavorited: favoritedRestaurantsId?.includes(r.id),
+          isLiked: likedRestaurantsId?.includes(r.id)
         }))
-        res.render('restaurants', { restaurants, categories, name, ...getPagination(limit, page, restObject.count) })
-      } catch (error) {
-        next(error)
+        cb(null, {
+          restaurants,
+          categories,
+          name,
+          categoryId: +categoryId,
+          ...getPagination(limit, page, restObject.count)
+        })
+      } catch (err) {
+        cb(err)
       }
     })()
   },
-  getRestaurant: (req, res, next) => {
+  getRestaurant: (req, cb) => {
     const { id } = req.params;
     (async () => {
       try {
@@ -47,17 +53,17 @@ const restaurantController = {
         }) // 接著操作 Sequelize 語法，不加 { raw: true, nest: true } ，另外 { raw: true } 本身也會破壞一對多的條件
         if (!restaurant) throw new Error("Restaurant didn't exist!")
         await restaurant.increment('viewCount') // 幫 viewCount 欄位 + 1 ，改變第二個參數預設 { by: 1 } 可調整間距
-        res.render('restaurant', {
+        cb(null, {
           restaurant: restaurant.toJSON(),
-          isFavorited: restaurant.FavoritedUsers.some(fu => fu.id === req.user.id),
-          isLiked: req.user.LikedRestaurants?.some(lr => lr.id === +id)
+          isFavorited: req.user ? restaurant.FavoritedUsers.some(fu => fu.id === req.user.id) : undefined,
+          isLiked: req.user?.LikedRestaurants?.some(lr => lr.id === +id)
         })
-      } catch (error) {
-        next(error)
+      } catch (err) {
+        cb(err)
       }
     })()
   },
-  getDashboard: (req, res, next) => {
+  getDashboard: (req, cb) => {
     const { id } = req.params;
     (async () => {
       try {
@@ -65,13 +71,13 @@ const restaurantController = {
           include: [Category, Comment, { model: User, as: 'FavoritedUsers' }]
         })
         if (!restaurant) throw new Error("Restaurant didn't exist!")
-        res.render('dashboard', { restaurant: restaurant.toJSON() })
-      } catch (error) {
-        next(error)
+        cb(null, { restaurant: restaurant.toJSON() })
+      } catch (err) {
+        cb(err)
       }
     })()
   },
-  getFeeds: (req, res, next) => {
+  getFeeds: (req, cb) => {
     const { name } = req.query;
     (async () => {
       try {
@@ -96,14 +102,14 @@ const restaurantController = {
             raw: true
           })
         ])
-        const restaurants = restaurantsArr.map(r => ({ ...r, description: r.description.substring(0, 50) }))
-        res.render('feeds', { restaurants, comments, categories })
-      } catch (error) {
-        next(error)
+        const restaurants = restaurantsArr.map(r => ({ ...r, description: r.description?.substring(0, 50) }))
+        cb(null, { restaurants, comments, categories })
+      } catch (err) {
+        cb(err)
       }
     })()
   },
-  getTopRestaurants: (req, res, next) => {
+  getTopRestaurants: (req, cb) => {
     (async () => {
       try {
         const restaurantsArr = await Restaurant.findAll({
@@ -114,15 +120,15 @@ const restaurantController = {
         const restaurants = restaurantsArr
           .map(r => ({
             ...r.toJSON(),
-            description: r.description.substring(0, 50),
-            isFavorited: req.user.FavoritedRestaurants?.some(fr => fr.id === r.id)
-            // isFavorited: req.user.FavoritedRestaurants?.map(fr => fr.id).includes(r.id)
+            description: r.description?.substring(0, 50) || '',
+            isFavorited: req.user?.FavoritedRestaurants?.some(fr => fr.id === r.id)
+            // isFavorited: req.user?.FavoritedRestaurants?.map(fr => fr.id).includes(r.id) || false
           }))
-        res.render('top-restaurants', { restaurants })
-      } catch (error) {
-        next(error)
+        cb(null, { restaurants })
+      } catch (err) {
+        cb(err)
       }
     })()
   }
 }
-module.exports = restaurantController
+module.exports = restaurantServices

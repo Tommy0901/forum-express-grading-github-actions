@@ -3,20 +3,22 @@
     "username": "root",
     "password": "password",
     "database": "forum",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "host": "34.81.39.247",
+    "dialect": "mysql",
+    "logging": false
   },
   "production": {
     "username": "root",
-    "password": null,
+    "password": "password",
     "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "host": "34.81.39.247",
+    "dialect": "mysql",
+    "logging": false
   },
   "travis": {
     "username": "travis",
     "database": "forum",
-    "host": "127.0.0.1",
+    "host": "34.81.39.247",
     "dialect": "mysql",
     "logging": false
   },
@@ -24,7 +26,7 @@
     "username": "root",
     "password": "password",
     "database": "forum",
-    "host": "127.0.0.1",
+    "host": "34.81.39.247",
     "dialect": "mysql",
     "logging": false
   }

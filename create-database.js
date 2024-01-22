@@ -3,7 +3,7 @@
 // Please modify "hostname", "user", "password" to match your MySQL server connection settings.
 // You can also change the "database" name if it already exists.
 // Don't forget to update the same settings in /config/config.json if you make any changes here.
-const { username: user, password, database, host } = require('./config/config').development
+const { username: user, password, database, host } = require('./config/config').production
 
 // *** User Settings End *** //
 const mysql = require('mysql2')

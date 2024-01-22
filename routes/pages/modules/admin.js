@@ -1,18 +1,18 @@
 const express = require('express')
 const router = express.Router()
 
-const adminController = require('../../controllers/admin-controller')
-const categoryController = require('../../controllers/category-controller')
+const adminController = require('../../../controllers/pages/admin-controller')
+const categoryController = require('../../../controllers/pages/category-controller')
 
-const { upload } = require('../../middlewares/multer')
+const { upload } = require('../../../middlewares/multer')
 
-router.get('/restaurants/create', adminController.createRestaurant)
-router.get('/restaurants/:id/edit', adminController.editRestaurant)
-router.delete('/restaurants/:id', adminController.deleteRestaurant)
-router.put('/restaurants/:id', upload.single('image'), adminController.putRestaurant)
-router.get('/restaurants/:id', adminController.getRestaurant)
+router.get('/restaurant/create', adminController.createRestaurant)
+router.get('/restaurant/:id/edit', adminController.editRestaurant)
+router.delete('/restaurant/:id', adminController.deleteRestaurant)
+router.put('/restaurant/:id', upload.single('image'), adminController.putRestaurant)
+router.get('/restaurant/:id', adminController.getRestaurant)
+router.post('/restaurant', upload.single('image'), adminController.postRestaurant)
 router.get('/restaurants', adminController.getRestaurants)
-router.post('/restaurants', upload.single('image'), adminController.postRestaurant)
 
 router.get('/users/new', adminController.registerUser)
 router.patch('/users/:id', adminController.patchUser)
