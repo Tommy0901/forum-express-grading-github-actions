@@ -100,7 +100,7 @@ const userController = {
     })
   },
   removeFollowing: (req, res, next) => {
-    userServices.removeLike(req, (err, data) => {
+    userServices.removeFollowing(req, (err, data) => {
       if (err) return next(err)
       if (!data) {
         req.flash('error', "You haven't followed this user!")

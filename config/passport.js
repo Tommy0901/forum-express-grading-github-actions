@@ -21,15 +21,14 @@ passport.use(new LocalStrategy({ usernameField: 'email', passwordField: 'passwor
           where: { email },
           raw: true
         })
+        if (!userData) return done(null, false, { message: 'email 或密碼錯誤' })
         const { password: userPassword, ...user } = userData
-        user
-          ? (await bcrypt.compare(password, userPassword))
-              ? done(null, user)
-              : done(null, false, {
-                type: 'error', // 此行可省略，因為 type 預設名稱即為 error
-                message: 'email 或密碼錯誤'
-              })
-          : done(null, false, { message: 'email 或密碼錯誤' })
+        await bcrypt.compare(password, userPassword)
+          ? done(null, user)
+          : done(null, false, {
+            type: 'error', // 此行可省略，因為 type 預設名稱即為 error
+            message: 'email 或密碼錯誤'
+          })
       } catch (err) {
         done(err)
       }

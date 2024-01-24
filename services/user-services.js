@@ -155,7 +155,7 @@ const userServices = {
       try {
         const users = await User.findAll({
           limit: 24,
-          attributes: ['id', 'name', 'image', [sequelize.literal('(SELECT COUNT(`id`) FROM followships WHERE followships.following_id = User.id)'), 'followerCount']],
+          attributes: ['id', 'name', 'image', [sequelize.literal('(SELECT COUNT(`id`) FROM Followships WHERE Followships.following_id = User.id)'), 'followerCount']],
           order: [['followerCount', 'DESC']],
           raw: true
         })

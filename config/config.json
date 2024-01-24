@@ -10,7 +10,7 @@
   "production": {
     "username": "root",
     "password": "password",
-    "database": "database_production",
+    "database": "forum",
     "host": "34.81.39.247",
     "dialect": "mysql",
     "logging": false
@@ -18,7 +18,7 @@
   "travis": {
     "username": "travis",
     "database": "forum",
-    "host": "34.81.39.247",
+    "host": "127.0.0.1",
     "dialect": "mysql",
     "logging": false
   },
@@ -26,7 +26,7 @@
     "username": "root",
     "password": "password",
     "database": "forum",
-    "host": "34.81.39.247",
+    "host": "127.0.0.1",
     "dialect": "mysql",
     "logging": false
   }

@@ -103,7 +103,7 @@ const restaurantServices = {
           })
         ])
         const restaurants = restaurantsArr.map(r => ({ ...r, description: r.description?.substring(0, 50) }))
-        cb(null, { restaurants, comments, categories })
+        cb(null, { restaurants, comments, categories, name })
       } catch (err) {
         cb(err)
       }
@@ -113,7 +113,7 @@ const restaurantServices = {
     (async () => {
       try {
         const restaurantsArr = await Restaurant.findAll({
-          attributes: ['id', 'name', 'image', 'description', [sequelize.literal('(SELECT COUNT(`id`) FROM favorites WHERE favorites.restaurant_id = Restaurant.id)'), 'favoritesCount']],
+          attributes: ['id', 'name', 'image', 'description', [sequelize.literal('(SELECT COUNT(`id`) FROM Favorites WHERE Favorites.restaurant_id = Restaurant.id)'), 'favoritesCount']],
           order: [['favoritesCount', 'DESC'], ['id', 'ASC']],
           limit: 10
         })

@@ -7,7 +7,8 @@
   </li>
   {{#each categories}}
     <li class="nav-item">
-      <a class="nav-link {{#ifCond this.name ../name}}active{{/ifCond}}" href="?name={{this.name}}">
+      <a class="nav-link {{#ifCond this.name ../name}}active{{/ifCond}}"
+        {{#ifCond this.name ../name}}{{else}}href="?name={{this.name}}"{{/ifCond}}>
         {{this.name}}
       </a> 
     </li>
