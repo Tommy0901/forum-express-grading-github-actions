@@ -15,6 +15,7 @@
     "url": "git+https://github.com/ALPHACamp/forum-express-grading.git"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.7.0",
     "axios": "^1.6.2",
     "bcryptjs": "^2.4.3",
     "connect-flash": "^0.1.1",
