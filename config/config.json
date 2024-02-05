@@ -3,7 +3,7 @@
     "username": "root",
     "password": "password",
     "database": "forum",
-    "host": "34.81.39.247",
+    "host": "34.125.82.122",
     "dialect": "mysql",
     "logging": false
   },
@@ -11,7 +11,7 @@
     "username": "root",
     "password": "password",
     "database": "forum",
-    "host": "34.81.39.247",
+    "host": "34.125.82.122",
     "dialect": "mysql",
     "logging": false
   },
